@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+{%  include "base/headData.html" %}
+
+<body>
+{% include "base/NavBar.html" %}
+
+<main>
+    <h1 style="text-align: center">Filter Devices</h1>
+    <div class="row">
+        <div class="input-field col s3">
+            <select>
+              <option value="" disabled selected>Select Brand</option>
+              {% for brand in all_brands %}
+                <option value={{ brand }}>{{ brand }}</option>
+              {% endfor %}
+            </select>
+            <label>Materialize Select</label>
+         </div>
+
+        <div class="input-field col s3">
+            <input placeholder="Placeholder" id="Model" type="text" class="validate">
+            <label for="item_model">Device Model</label>
+        </div>
+
+    </div>
+
+</main>
+
+{% include "base/footer.html" %}
+
+<script>
+    $(document).ready(function(){
+        $('select').formSelect();
+    });
+</script>

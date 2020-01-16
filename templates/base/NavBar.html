@@ -1,0 +1,24 @@
+<!-- Dropdown Structure -->
+<ul id="dropdown1" class="dropdown-content">
+  <li><a href="{% url 'frontend:all_mobiles' 1%}">All Mobiles</a></li>
+
+  <li class="divider"></li>
+  <li><a href="{% url 'frontend:new_search' %}">Search devices</a></li>
+</ul>
+
+<header>
+    <nav>
+        <div class="container nav-wrapper">
+            <a href="/" class="brand-logo">TuAnh Listing</a>
+            <ul id="nav-mobile" class="right">
+                <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">Mobiles<i class="material-icons right">arrow_drop_down</i></a></li>
+                <li><a href={% url 'frontend:about' %}>About</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<script>
+    $(document).ready(function(){
+        $(".dropdown-trigger").dropdown();
+    });
+</script>

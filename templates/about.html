@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+{%  include "base/headData.html" %}
+
+<body>
+    {% include "base/NavBar.html" with sources=sources%}
+    <main>
+        <h1 style="text-align: center">About Me</h1>
+        <div class="row">
+            <div class="col s3">
+                <div class="center">
+                    <i class="large material-icons" style="color: palevioletred">person</i>
+                    <p><strong>Particular</strong></p>
+                    <p class="light center">Name: Dang Tu Anh</p>
+                    <p class="light center">Nationality: Vietnamese</p>
+                    <p class="light center">Work Pass: EP</p>
+                </div>
+            </div>
+
+            <div class="col s3">
+                <div class="center">
+                    <i class="large material-icons" style="color: palevioletred">book</i>
+                    <p><strong>Education</strong></p>
+                    <p class="light center">University: National University of Singapore</p>
+                    <p class="light center">Degree: Bachelor of Electrical Engineering</p>
+                </div>
+            </div>
+
+            <div class="col s3">
+                <div class="center">
+                    <i class="large material-icons" style="color: palevioletred">work</i>
+                    <p><strong>Work Experiences</strong></p>
+                    <p class="light center">Software Engineer - Thales (current-1.5 years)</p>
+                    <p class="light center">Software Engineer - Continental (9 months)</p>
+                    <p class="light center">Software Engineer - NDIAutomation (2.5 years)</p>
+                </div>
+            </div>
+
+            <div class="col s3">
+                <div class="center">
+                    <i class="large material-icons" style="color: palevioletred">assessment</i>
+                    <p><strong>Skills Set</strong></p>
+                    <p class="light center">Languages: Python (3y), C++(5y), Java(1y)</p>
+                    <p class="light center">Backend: SQL (MySQL), NoSQL (DynamoDB)</p>
+                    <p class="light center">Frontend: Django, PHP</p>
+                    <p class="light center">Machine Learning: sklearn, Keras</p>
+                </div>
+            </div>
+        </div>
+
+        <h1 style="text-align: center">About WebSite</h1>
+        <div class="row">
+            <div class="col s3">
+                <div class="center">
+                    <h5><strong>Core Language</strong></h5>
+                    <img src="{% static "images/pythonIcon.png" %}" width="200" height="200">
+                    <p>Python</p>
+                    <p class="light center">Selenium</p>
+                    <p class="light center">BeautifulSoup</p>
+                    <p class="light center">Pandas</p>
+                </div>
+            </div>
+
+            <div class="col s3">
+                <div class="center">
+                    <h5><strong>Backend</strong></h5>
+                    <img src="{% static "images/dynamoDB.png" %}" width="200" height="200">
+                    <p>Amazon DynamoDB</p>
+                    <img src="{% static "images/ec2Icon.png" %}" width="200" height="200">
+                    <p>Amazon EC2</p>
+                </div>
+            </div>
+
+            <div class="col s3">
+                <div class="center">
+                    <h5><strong>Frontend</strong></h5>
+                    <img src="{% static "images/django.png" %}" width="200" height="200">
+                    <p>Django</p>
+                    <img src="{% static "images/Route53Icon.png" %}" width="200" height="200">
+                    <p>Amazon Route 53</p>
+                </div>
+            </div>
+
+            <div class="col s3">
+                <div class="center">
+                    <h5><strong>Styling</strong></h5>
+                    <img src="{% static "images/materialize-icon.png" %}" width="200" height="200">
+                    <p>Materialize</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    {% include "base/footer.html"%}
+</body>

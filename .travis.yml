@@ -1,0 +1,18 @@
+sudo: required
+language: python
+python:
+- '3.7'
+- '3.8'
+addons:
+  chrome: stable
+before_install:
+- google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+install:
+- pip install -r requirements.txt
+script: python3 Main.py
+before_script:
+- aws configure list
+- LATEST_CHROMEDRIVER_VERSION=`curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"`
+- curl "https://chromedriver.storage.googleapis.com/${LATEST_CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
+  -O
+- unzip chromedriver_linux64.zip -d ~/bin
