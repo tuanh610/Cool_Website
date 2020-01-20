@@ -25,7 +25,7 @@ SECRET_KEY = '$zocm)_*jwdl5#cah@_e=2f^-sq)iwgmv2wuu$y=dqy+^b@0hd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["cool-website-tuanh.herokuapp.com"]
+ALLOWED_HOSTS = ["cool-website-tuanh.herokuapp.com", "127.0.0.1"]
 
 
 # Application definition
