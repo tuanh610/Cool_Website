@@ -1,7 +1,6 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
-import pandas as pd
-from urllib.parse import urljoin
+# from urllib.parse import urljoin
 from selenium.webdriver.chrome.options import Options
 import os
 
@@ -13,10 +12,10 @@ class NoProductFoundException(Exception):
 def connectToWebSite(url, ignoreTerm=None):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     options = Options()
-    options.add_argument("--no-sandbox");
-    options.add_argument("--headless");
-    options.add_argument("disable-gpu");
-    options.add_argument("--disable-dev-shm-usage");
+    options.add_argument("--no-sandbox")
+    options.add_argument("--headless")
+    options.add_argument("disable-gpu")
+    options.add_argument("--disable-dev-shm-usage")
     driver = webdriver.Chrome(options=options)
     driver.get(url)
     content = driver.page_source
