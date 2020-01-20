@@ -19,7 +19,7 @@ class phoneDBEngine:
             self.table.put_item(
                 Item=phoneDBEngine.convertPhoneToDBData(phone)
             )
-        print("Data pushed completed")
+        #print("Data pushed completed")
 
     def getAllDataFromTable(self):
         try:
@@ -130,7 +130,8 @@ class phoneDBEngine:
         except ClientError as e:
             print(e.response['Error']['Message'])
         else:
-            print("UpdateItem succeeded:")
+            pass
+            #print("UpdateItem succeeded:")
 
     def updateAllBrandData(self, all_brands):
         try:
@@ -177,7 +178,8 @@ class phoneDBEngine:
         except ClientError as e:
             print(e.response['Error']['Message'])
         else:
-            print("DeleteItem succeeded:")
+            pass
+            #print("DeleteItem succeeded:")
 
     @staticmethod
     def convertDBDataToPhone(item):

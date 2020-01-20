@@ -16,6 +16,7 @@ def connectToWebSite(url, ignoreTerm=None):
     options.add_argument("--headless")
     options.add_argument("disable-gpu")
     options.add_argument("--disable-dev-shm-usage")
+    options.add_argument('--log-level=3')
     driver = webdriver.Chrome(options=options)
     driver.get(url)
     content = driver.page_source

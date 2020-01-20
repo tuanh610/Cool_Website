@@ -66,8 +66,10 @@ def masterUpdate():
 def notifyByEmail(changes):
     content = ""
     for src in changes:
-        content += "Update for %s:\n" % src
         newItem, updateNeeded, toDelete = changes[src]
+        if len(newItem) == 0 and len(updateNeeded) == 0 and len(toDelete)== 0:
+            continue
+        content += "Update for %s:\n" % src
         if len(newItem) > 0:
             content += "New Items:\n"
             for item in newItem:
@@ -93,11 +95,14 @@ def notifyByEmail(changes):
             content = "No update needed"
         content += "================================================================\n"
 
-    mail = mailModule()
-    service = mail.getCredential()
-    message = mail.create_message("warmboy610@gmail.com", "tuanh.dang610@gmail.com", "Update Price", content)
-    result = mail.send_message(service, message)
-    print(result)
+    if content != "":
+        mail = mailModule()
+        service = mail.getCredential()
+        message = mail.create_message("warmboy610@gmail.com", "tuanh.dang610@gmail.com", "Update Price", content)
+        result = mail.send_message(service, message)
+        print(result)
+    else:
+        print("Nothing new to notify users")
 
 
 """
