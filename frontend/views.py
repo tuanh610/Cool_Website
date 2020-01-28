@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 import Core.constant as constants
 import Core.utilityHelper as helper
 import Core.constant as constant
+from .forms import SearchForm
 # Create your views here.
 
 def home(request):
@@ -15,9 +16,8 @@ def about(request):
 
 
 def new_search(request):
-    phoneDBAdapter = phoneDBEngine(tableName=constant.dynamoDBTableName)
-    all_brands = phoneDBAdapter.getAllBrandData()
-    return render(request, template_name='mobile/new_search.html', context={"all_brands": all_brands})
+    searchform = SearchForm()
+    return render(request, template_name='mobile/new_search.html', context={"form": searchform})
 
 def search_result(request):
     try:
