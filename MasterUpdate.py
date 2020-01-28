@@ -13,7 +13,7 @@ def masterUpdate():
             data = parser.getAllPages()
 
             # Update data for each source
-            dataFromDB = phoneDBAdaper.getAllDataFromTable()
+            dataFromDB = phoneDBAdaper.getAllPhones()
             updateNeeded = []
             newItem = []
             # Update data
@@ -111,12 +111,16 @@ Once the project is pulled from the projects, please use the link in mailingModu
 credentials.json file. Then enable this code by set notifyByEmail to true
 """
 
-notify = True
-changeToSend = masterUpdate()
-if notify:
-    notifyByEmail(changeToSend)
-print("done")
+# notify = True
+# changeToSend = masterUpdate()
+# if notify:
+#     notifyByEmail(changeToSend)
+# print("done")
 
-
+phoneAdapter = phoneDBEngine(constant.dynamoDBTableName)
+data = phoneAdapter.getItemsWithBrandAndModel(brand="Samsung", model="Galaxy A20s")
+phoneData = phoneDBEngine.convertAllDataToPhone(data)
+for item in phoneData:
+    print(item)
 
 

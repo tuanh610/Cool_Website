@@ -52,17 +52,64 @@ class TestDatabaseFunctional(unittest.TestCase):
         self.phone.info["currency"] = "Yolo Dollar"
         self.db.updateItemToDB(self.phone)
         try:
-            result = self.db.getPhoneFromDB(brand=self.phone.getBrand(),
-                                            model=self.phone.getModel(), vendor=self.phone.getVendor())
+            temp = self.db.getSpecificItemFromDB(brand=self.phone.getBrand(),
+                                                   model=self.phone.getModel(), vendor=self.phone.getVendor())
+            result = phoneDBEngine.convertAllDataToPhone(temp)
             self.assertEqual(result.getPrice(), self.phone.getPrice())
             self.assertEqual(result.getInfo().get("currency"), self.phone.getInfo().get("currency"))
         except ClientError as e:
             self.fail("update Data failed")
         # Delete
         self.db.deleteItemFromDB(self.phone)
-        temp = self.db.getPhoneFromDB(brand=self.phone.getBrand(),
-                                                 model=self.phone.getModel(), vendor=self.phone.getVendor())
+        temp = self.db.getSpecificItemFromDB(brand=self.phone.getBrand(),
+                                             model=self.phone.getModel(), vendor=self.phone.getVendor())
         self.assertIsNone(temp)
+
+    def test_getAllPhones_withBrands(self):
+        phoneAdapter = phoneDBEngine(constants.dynamoDBTableName)
+        data = phoneAdapter.getItemsWithBrandAndModel(brand="Samsung")
+        phoneData = phoneDBEngine.convertAllDataToPhone(data)
+        for item in phoneData:
+            if "Samsung" not in item.getBrand():
+                self.fail("Phones not from correct brand." + str(item))
+
+    def test_getAllPhones_withBrands_andModels(self):
+        phoneAdapter = phoneDBEngine(constants.dynamoDBTableName)
+        data = phoneAdapter.getItemsWithBrandAndModel(brand="Samsung", model="Galaxy A20s")
+        phoneData = phoneDBEngine.convertAllDataToPhone(data)
+        for item in phoneData:
+            if "Samsung" not in item.getBrand():
+                self.fail("Phones not from correct brand." + str(item))
+            else:
+                print(item)
+
+    def test_getAllPhones(self):
+        phoneAdapter = phoneDBEngine(constants.dynamoDBTableName)
+        data = phoneAdapter.getAllPhones()
+        self.assertGreater(len(data), 30)
+
+    def test_getPhonesWithinPriceRange(self):
+        lowerLim = 5000000
+        higherLim = 10000000
+        phoneAdapter = phoneDBEngine(constants.dynamoDBTableName)
+        data = phoneAdapter.getPhonesInPriceRange(lowerLim, higherLim)
+        self.assertGreater(len(data), 0)
+        for item in data:
+            if item.getPrice() < lowerLim or item.getPrice() > higherLim:
+                self.fail("Price not within range. " + str(item))
+
+    def test_getPhonesWithinPriceRangeWithBrand(self):
+        lowerLim = 5000000
+        higherLim = 10000000
+        brand = "Samsung"
+        phoneAdapter = phoneDBEngine(constants.dynamoDBTableName)
+        data = phoneAdapter.getItemWithBrandAndPriceAndType(devType='Mobile', brand=brand,
+                                                            lowerLim=lowerLim, higherLim=higherLim)
+        self.assertGreater(len(data), 0)
+        for item in data:
+            phone = phoneDBEngine.convertDBDataToPhone(item)
+            if phone.getPrice() < lowerLim or phone.getPrice() > higherLim or phone.getBrand() != brand:
+                self.fail("Price not within range or Item not from from correct brand. " + str(item))
 
 if __name__ == '__main__':
     unittest.main()

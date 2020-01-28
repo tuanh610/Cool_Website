@@ -5,7 +5,6 @@ from botocore.exceptions import ClientError
 import Core.database.DatabaseEngine as DatabaseEngine
 import Core.constant as constant
 
-
 class phoneDBEngine:
     def __init__(self, tableName: str):
         DatabaseEngine.createTable(tableName=tableName, primaryElemens=constant.phonePrimaryElements,
@@ -14,104 +13,13 @@ class phoneDBEngine:
         self.tableName = tableName
         self.table = self.dynamodb.Table(self.tableName)
 
+    # region push and update
     def pushAllDataToDB(self, data: [PhoneData]):
         for phone in data:
             self.table.put_item(
                 Item=phoneDBEngine.convertPhoneToDBData(phone)
             )
         #print("Data pushed completed")
-
-    def getAllDataFromTable(self):
-        try:
-
-            response = self.table.scan(
-                FilterExpression=Attr('PRICE').gt(0)
-            )
-            result = []
-            for item in response['Items']:
-                phone = phoneDBEngine.convertDBDataToPhone(item)
-                if phone is not None:
-                    result.append(phone)
-            return result
-        except ClientError as e:
-            print(e.response['Error']['Message'])
-
-    def getPhoneFromDB(self, brand: str, model: str, vendor: str):
-        try:
-            response = self.table.get_item(
-                Key={
-                    'BRAND': brand,
-                    'MODEL': model + "_" + vendor
-                }
-            )
-            item = phoneDBEngine.convertDBDataToPhone(response['Item'])
-            if item is not None:
-                print("Get item successfully")
-            else:
-                print("No record for " + brand + " " + model + " from " + vendor)
-            return item
-        except ClientError as e:
-            print(e.response['Error']['Message'])
-            raise ClientError
-        except KeyError as e:
-            print("Data is empty. No Item found")
-            return None
-
-    def getPhonesFromDB(self, brand: str, model: str = None):
-        try:
-            if model is None:
-                condition = Key('BRAND').eq(brand)
-            else:
-                condition = Key('BRAND').eq(brand) & Key('MODEL').begins_with(model)
-
-            response = self.table.query(
-                KeyConditionExpression=condition
-            )
-            result = []
-            for item in response['Item']:
-                phone = phoneDBEngine.convertDBDataToPhone(item)
-                if phone is not None:
-                    result.append(phone)
-            print("Get items successfully")
-            return result
-        except ClientError as e:
-            print(e.response['Error']['Message'])
-            raise ClientError
-        except KeyError as e:
-            print("Data is empty. No Item found")
-            return None
-
-    def getItemsWithPrimaryKey(self, keyCondition, filterCondition):
-        try:
-            response = self.table.query(
-                KeyConditionExpression=keyCondition,
-                FilterExpression=filterCondition
-            )
-            result = []
-            for item in response['Items']:
-                phone = phoneDBEngine.convertDBDataToPhone(item)
-                if phone is not None:
-                    result.append(phone)
-            return result
-        except ClientError as e:
-            print(e.response['Error']['Message'])
-
-    def getPhonesInPriceRange(self, lowerLim, upperLim):
-        try:
-            gsiElement = constant.phoneSecondaryElements[0]
-            response = self.table.query(
-                IndexName=gsiElement.name,
-                KeyConditionExpression=Key(gsiElement.elements[0].name).eq('Mobile') &
-                                       Key(gsiElement.elements[1].name).between(lowerLim, upperLim),
-            )
-            result = []
-            for item in response['Item']:
-                phone = phoneDBEngine.convertDBDataToPhone(item)
-                if phone is not None:
-                    result.append(phone)
-            return result
-        except ClientError as e:
-            print(e.response['Error']['Message'])
 
     def updateItemToDB(self, item: PhoneData):
         try:
@@ -131,7 +39,7 @@ class phoneDBEngine:
             print(e.response['Error']['Message'])
         else:
             pass
-            #print("UpdateItem succeeded:")
+            # print("UpdateItem succeeded:")
 
     def updateAllBrandData(self, all_brands):
         try:
@@ -150,6 +58,98 @@ class phoneDBEngine:
             print(e.response['Error']['Message'])
         else:
             print("All brands list updated succeeded:")
+    # endregion
+
+    def getItemWithBrandAndPriceAndType(self, devType: str, brand: str, lowerLim, higherLim):
+        try:
+            gsiElement = constant.phoneSecondaryElements[0]
+            response = self.table.query(
+                IndexName=gsiElement.name,
+                KeyConditionExpression=Key(gsiElement.elements[0].name).eq(devType) &
+                                       Key(gsiElement.elements[1].name).between(lowerLim, higherLim),
+                FilterExpression=Key(constant.phonePrimaryElements[0].name).eq(brand),
+            )
+            return response['Items']
+        except ClientError as e:
+            print(e.response['Error']['Message'])
+
+    def getAllDataFromTable(self):
+        try:
+
+            response = self.table.scan(
+                FilterExpression=Attr('PRICE').gt(0)
+            )
+            return response['Items']
+        except ClientError as e:
+            print(e.response['Error']['Message'])
+
+    def getSpecificItemFromDB(self, brand: str, model: str, vendor: str):
+        try:
+            response = self.table.get_item(
+                Key={
+                    'BRAND': brand,
+                    'MODEL': model + "_" + vendor
+                }
+            )
+            return response['Items']
+        except ClientError as e:
+            print(e.response['Error']['Message'])
+            raise ClientError
+        except KeyError as e:
+            print("Data is empty. No Item found")
+            return None
+
+    def getItemsWithBrandAndModel(self, brand: str, model: str = None):
+        try:
+            if model is None:
+                condition = Key('BRAND').eq(brand)
+            else:
+                condition = Key('BRAND').eq(brand) & Key('MODEL').begins_with(model)
+
+            response = self.table.query(
+                KeyConditionExpression=condition
+            )
+            return response['Items']
+        except ClientError as e:
+            print(e.response['Error']['Message'])
+            raise ClientError
+        except KeyError as e:
+            print("Data is empty. No Item found")
+            return None
+
+    def getPhonesInPriceRange(self, lowerLim, upperLim):
+        try:
+            gsiElement = constant.phoneSecondaryElements[0]
+            response = self.table.query(
+                IndexName=gsiElement.name,
+                KeyConditionExpression=Key(gsiElement.elements[0].name).eq('Mobile') &
+                                       Key(gsiElement.elements[1].name).between(lowerLim, upperLim),
+            )
+            result = []
+            for item in response['Items']:
+                phone = phoneDBEngine.convertDBDataToPhone(item)
+                if phone is not None:
+                    result.append(phone)
+            return result
+        except ClientError as e:
+            print(e.response['Error']['Message'])
+
+
+    def getAllPhones(self):
+        try:
+            gsiElement = constant.phoneSecondaryElements[0]
+            response = self.table.query(
+                IndexName=gsiElement.name,
+                KeyConditionExpression=Key(gsiElement.elements[0].name).eq('Mobile'),
+            )
+            result = []
+            for item in response['Items']:
+                phone = phoneDBEngine.convertDBDataToPhone(item)
+                if phone is not None:
+                    result.append(phone)
+            return result
+        except ClientError as e:
+            print(e.response['Error']['Message'])
 
     def getAllBrandData(self):
         try:
@@ -181,6 +181,7 @@ class phoneDBEngine:
             pass
             #print("DeleteItem succeeded:")
 
+    # region Static Methods
     @staticmethod
     def convertDBDataToPhone(item):
         try:
@@ -205,3 +206,13 @@ class phoneDBEngine:
             'VENDOR': phone.getVendor(),
             'INFO': phone.getInfo()
         }
+
+    @staticmethod
+    def convertAllDataToPhone(self, items):
+        result = []
+        for item in items:
+            temp = phoneDBEngine.convertDBDataToPhone(item)
+            if temp is not None:
+                result.append(item)
+        return result
+    # endregion

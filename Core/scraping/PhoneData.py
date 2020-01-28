@@ -41,6 +41,9 @@ class PhoneData:
         else:
             return False
 
+    def __str__(self):
+        return self.getName() + " from " + self.getVendor() + ": " + str(self.getPrice())
+
     def needUpdate(self, oldData):
         if (self == oldData) and (self.price != oldData.price or self.info != oldData.info):
             return True
