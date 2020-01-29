@@ -14,7 +14,7 @@ class SearchForm(forms.Form):
     allChoices = [(x, x) for x in brands]
     brand = forms.ChoiceField(choices=allChoices, label="Brands")
     model = forms.CharField(label="Models", required=False)
-    type = forms.ChoiceField(choices=[("Mobiles", "Mobiles")])
+    type = forms.ChoiceField(choices=[("Mobile", "Mobile")])
     lowPrice = forms.IntegerField(min_value=0, required=False)
     highPrice = forms.IntegerField(min_value=0, required=False)
 

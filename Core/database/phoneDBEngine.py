@@ -191,7 +191,7 @@ class phoneDBEngine:
                 results = phoneDBEngine.convertAllDataToPhone(temp)
             else:
                 temp = self.getItemWithBrandAndPriceAndType(devType=devType, brand=brand,
-                                                                      lowerLim=int(lowPrice), higherLim=int(highPrice))
+                                                            lowerLim=int(lowPrice), higherLim=int(highPrice))
                 results = phoneDBEngine.convertAllDataToPhone(temp)
         else:
             results = self.getPhonesInPriceRange(int(lowPrice), int(highPrice))
