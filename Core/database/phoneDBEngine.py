@@ -99,7 +99,7 @@ class phoneDBEngine:
             print("Data is empty. No Item found")
             return None
 
-    def getItemsWithBrandAndModel(self, brand: str, model: str = None):
+    def getItemsWithBrandAndModel(self, brand, model=None):
         try:
             if model is None:
                 condition = Key('BRAND').eq(brand)
@@ -181,6 +181,22 @@ class phoneDBEngine:
             pass
             #print("DeleteItem succeeded:")
 
+    def filterItemsWithConditions(self, brand, model, devType, lowPrice, highPrice):
+        if model != '' and brand != '':
+            temp = self.getItemsWithBrandAndModel(brand, model)
+            results = phoneDBEngine.convertAllDataToPhone(temp)
+        elif model == '' and brand != '':
+            if lowPrice is None or highPrice is None or devType == '':
+                temp = self.getItemsWithBrandAndModel(brand=brand)
+                results = phoneDBEngine.convertAllDataToPhone(temp)
+            else:
+                temp = self.getItemWithBrandAndPriceAndType(devType=devType, brand=brand,
+                                                                      lowerLim=int(lowPrice), higherLim=int(highPrice))
+                results = phoneDBEngine.convertAllDataToPhone(temp)
+        else:
+            results = self.getPhonesInPriceRange(int(lowPrice), int(highPrice))
+        return results
+
     # region Static Methods
     @staticmethod
     def convertDBDataToPhone(item):
@@ -208,11 +224,11 @@ class phoneDBEngine:
         }
 
     @staticmethod
-    def convertAllDataToPhone(self, items):
+    def convertAllDataToPhone(items):
         result = []
         for item in items:
             temp = phoneDBEngine.convertDBDataToPhone(item)
             if temp is not None:
-                result.append(item)
+                result.append(temp)
         return result
     # endregion

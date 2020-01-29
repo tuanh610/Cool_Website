@@ -7,23 +7,20 @@
 {% include "base/NavBar.html" with sources=AllSources%}
 
 <main>
-    <h1>Filter Devices</h1>
-    <row>
-        <div class="input-field col s3">
-            <select>
-              <option value="" disabled selected>Select Brand</option>
-              {% for brand in all_brands %}
-                <option value={{ brand }}> </option>
-              {% endfor %}
-            </select>
-            <label>Materialize Select</label>
-         </div>
-
-        <div class="input-field col s9">
-            <input placeholder="Placeholder" id="Model" type="text" class="validate">
-            <label for="item_model">Device Model</label>
+    <h1 class="indigo-text darken-1" style="text-align: center">Search Result</h1>
+    {% if error_message %}
+        <div>
+        {{ error_message }}
         </div>
-    </row>
+    {% else %}
+        <div class="row">
+            {% for phone in allData %}
+                <div class="col s3">
+                    {% include "mobile/cardItems.html" with phone=phone %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
 </main>
 

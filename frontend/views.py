@@ -1,9 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from Core.database.phoneDBEngine import phoneDBEngine
 from django.core.paginator import Paginator
 import Core.constant as constants
 import Core.utilityHelper as helper
-import Core.constant as constant
 from .forms import SearchForm
 # Create your views here.
 
@@ -21,31 +20,31 @@ def new_search(request):
 
 def search_result(request):
     try:
-        phoneDBAdapter = phoneDBEngine(tableName=constant.dynamoDBTableName)
-        devType = request.POST['TYPE']
-        brand = request.POST['BRAND']
-        model = request.POST['MODEL']
-        lowerLim = request.POST['LOWER_LIM']
-        higherLim = request.POST['HIGHER_LIM']
+        if request.method == "POST":
+            searchform = SearchForm(request.POST)
+            if searchform.is_valid():
+                devType = str(searchform.cleaned_data.get('type'))
+                brand = str(searchform.cleaned_data.get('brand'))
+                model = str(searchform.cleaned_data.get('model'))
+                lowPrice = searchform.cleaned_data.get('lowPrice')
+                highPrice = searchform.cleaned_data.get('highPrice')
+                print(devType, brand, model, lowPrice, highPrice)
+
+                phoneAdapter = phoneDBEngine(tableName=constants.dynamoDBTableName)
+                results = phoneAdapter.filterItemsWithConditions(brand, model, devType, lowPrice, highPrice)
+                results.sort(key=lambda phone: phone.price)
+                return render(request, 'mobile/search_result.html', {'allData': results})
+            else:
+                render(request, 'mobile/search_result.html', {
+                    'error_message': "Filter Conditions are wrong"
+                })
+        else:
+            return redirect('frontend:new_search')
     except KeyError:
         return render(request, 'mobile/search_result.html', {
             'error_message': "You didn't select any filter conditions"
         })
-    else:
-        if model != "NONE" and brand != "NONE":
-            temp = phoneDBAdapter.getItemsWithBrandAndModel(brand, model)
-            results = phoneDBEngine.convertAllDataToPhone(temp)
-        elif model == "NONE" and brand != "NONE":
-            if lowerLim == "NONE" or higherLim == "NONE" or devType == "NONE":
-                temp = phoneDBAdapter.getItemsWithBrandAndModel(brand)
-                results = phoneDBEngine.convertAllDataToPhone(temp)
-            else:
-                temp = phoneDBAdapter.getItemWithBrandAndPriceAndType(devType=devType, brand=brand,
-                                                                      lowerLim=int(lowerLim), higherLim=int(higherLim))
-                results = phoneDBEngine.convertAllDataToPhone(temp)
-        else:
-            results = phoneDBAdapter.getPhonesInPriceRange(int(lowerLim), int(higherLim))
-        return render(request, 'mobile/search_result.html', {'allData': results})
+
 
 
 

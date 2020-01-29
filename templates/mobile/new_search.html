@@ -9,19 +9,13 @@
 
 <main>
     <h1 style="text-align: center">Filter Devices</h1>
-    <form action="{% url 'frontend:search_result' %}" method="post" id="filter_conditions">
-        {% csrf_token %}
-        {{ form }}
-        <div>
-            <input type="submit" value="Search">
-        </div>
-    </form>
-
+    <div style="padding: 20px">
+        {% crispy form form.helper %}
+    </div>
 
 </main>
 
 {% include "base/footer.html" %}
-
 <script>
     $(document).ready(function(){
         $('select').formSelect();

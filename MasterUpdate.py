@@ -54,7 +54,7 @@ def masterUpdate():
 
             #Update all brands
             phoneDBAdaper.updateAllBrandData(list(all_brands))
-            f = open("brands.txt", "+w")
+            f = open("Core/brands.txt", "+w")
             f.write(', '.join(list(all_brands)))
             f.close()
 
@@ -111,16 +111,10 @@ Once the project is pulled from the projects, please use the link in mailingModu
 credentials.json file. Then enable this code by set notifyByEmail to true
 """
 
-# notify = True
-# changeToSend = masterUpdate()
-# if notify:
-#     notifyByEmail(changeToSend)
-# print("done")
-
-phoneAdapter = phoneDBEngine(constant.dynamoDBTableName)
-data = phoneAdapter.getItemsWithBrandAndModel(brand="Samsung", model="Galaxy A20s")
-phoneData = phoneDBEngine.convertAllDataToPhone(data)
-for item in phoneData:
-    print(item)
+notify = True
+changeToSend = masterUpdate()
+if notify:
+    notifyByEmail(changeToSend)
+print("done")
 
 
