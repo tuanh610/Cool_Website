@@ -32,7 +32,7 @@ def initBrandsUsingTextFile():
 
 
 def readBrandsFromFile():
-    fileName = str(pathlib.Path(__file__).parent.absolute()) + "\\brands.txt"
+    fileName = str(pathlib.Path(__file__).parent.absolute()) + "/brands.txt"
     f = open(fileName, "r")
     content = f.read()
     f.close()

@@ -7,10 +7,10 @@ from crispy_forms.layout import Layout, Submit, Row, Column
 from django.urls import reverse
 
 class SearchForm(forms.Form):
-    # phoneDBAdapter = phoneDBEngine(tableName=constants.dynamoDBTableName)
-    # brands = phoneDBAdapter.getAllBrandData()
-    # if brands is None:
-    brands = helper.readBrandsFromFile()
+    phoneDBAdapter = phoneDBEngine(tableName=constants.dynamoDBTableName)
+    brands = phoneDBAdapter.getAllBrandData()
+    if brands is None:
+        brands = helper.readBrandsFromFile()
     allChoices = [(x, x) for x in brands]
     brand = forms.ChoiceField(choices=allChoices, label="Brands")
     model = forms.CharField(label="Models", required=False)
