@@ -52,7 +52,8 @@ def search_result(request):
 def all_mobiles(request, page):
     # Retrieve all data from amazonDB
     phoneDB = phoneDBEngine(tableName=constants.dynamoDBTableName)
-    phones = phoneDB.getAllPhones()
+    data = phoneDB.getAllDevicesWithType('Mobile')
+    phones = phoneDBEngine.convertAllDataToPhone(data)
     processedList = helper.getLowestPriceList(phones)
     paginator = Paginator(list(processedList.values()), 12)
     allData = paginator.get_page(page)

@@ -9,8 +9,8 @@ class PhoneData:
         else:
             self.info = info
         if model != "":
-            self.brand = brand.lower()
-            self.model = model.lower()
+            self.brand = brand
+            self.model = model
         else:
             idx = brand.find(" ")
             temp1 = brand[:idx] if idx >= 0 else brand
@@ -20,14 +20,18 @@ class PhoneData:
                     temp2 = temp1[i:] + (" " + temp2 if temp2 != "" else "")
                     temp1 = temp1[:i]
                     break
-            self.brand = temp1.lower()
-            self.model = temp2.lower()
+            self.brand = temp1
+            self.model = temp2
+
         self.vendor = vendor
 
         if name is not None:
             self.name = name
         else:
-            self.name = brand + ' ' + model
+            self.name = self.brand + ' ' + self.model
+
+        self.brand = self.brand.lower()
+        self.model = self.model.lower()
 
         if isinstance(price, str):
             self.price = 0

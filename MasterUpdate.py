@@ -10,17 +10,18 @@ def masterUpdate():
     for src in constant.scrapingSources:
         if src.name in constant.parser:
             parser = constant.parser[src.name](src.info.ignoreTerm, src.url, src.info.param)
-            data = parser.getAllPages()
+            phonesFromScraper = parser.getAllPages()
 
             # Update data for each source
-            dataFromDB = phoneDBAdaper.getAllPhones()
+            dataFromDB = phoneDBAdaper.getAllDevicesWithType('Mobile')
+            phonesFromDB = phoneDBEngine.convertAllDataToPhone(dataFromDB)
             updateNeeded = []
             newItem = []
             # Update data
-            for item in data:
+            for item in phonesFromScraper:
                 all_brands.add(item.getBrand())
                 existed = False
-                for phone in dataFromDB:
+                for phone in phonesFromDB:
                     if item == phone:
                         if item.needUpdate(oldData=phone):
                             updateNeeded.append((item, phone))
@@ -30,13 +31,13 @@ def masterUpdate():
                     newItem.append(item)
             #Delete old items that not there anymore
             toDelete = []
-            for phone in dataFromDB:
+            for phone in phonesFromDB:
                 existed = False
-                for item in data:
+                for item in phonesFromScraper:
                     if item == phone:
                         existed = True
                         break
-                if not existed:
+                if not existed and phone.getVendor() == src.name:
                     toDelete.append(phone)
 
             # push new data to database

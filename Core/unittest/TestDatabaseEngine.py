@@ -85,7 +85,7 @@ class TestDatabaseFunctional(unittest.TestCase):
 
     def test_getAllPhones(self):
         phoneAdapter = phoneDBEngine(constants.dynamoDBTableName)
-        data = phoneAdapter.getAllPhones()
+        data = phoneAdapter.getAllDevicesWithType('Mobile')
         self.assertGreater(len(data), 30)
 
     def test_getPhonesWithinPriceRange(self):
