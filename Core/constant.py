@@ -12,7 +12,8 @@ dynamoDBAllBrandRK = "dummy1"
 parser = {"hoanghaMobile": HoangHaMobileScraper}
 
 scrapingSources = [
-    SourceData(url="https://hoanghamobile.com/dien-thoai-di-dong-c14.html", name="hoanghaMobile", info=SourceInfo(param="?sort=0&p=", ignoreTerm=["Chính hãng", "Chính Hãng", "-"]))
+    SourceData(url="https://hoanghamobile.com/dien-thoai-di-dong-c14.html", name="hoanghaMobile", info=SourceInfo(param="?sort=0&p=", ignoreTerm=["Chính hãng", "Chính Hãng", "-"])),
+    SourceData(url="https://www.thegioididong.com/dtdd", name="thegioididong", info=SourceInfo(param="viewmore", ignoreTerm=["Chính hãng", "Chính Hãng", "-"]))
 ]
 
 priceRange = [(0, 2000000), (2000000, 5000000), (5000000, 10000000), (1000000, 20000000)]

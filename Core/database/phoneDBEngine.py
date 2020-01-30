@@ -208,7 +208,7 @@ class phoneDBEngine:
             else:
                 phone_model = temp[:idx]
             return PhoneData(brand=item['BRAND'], model=phone_model,
-                             price=item['PRICE'], vendor=item['VENDOR'], info=item['INFO'])
+                             price=item['PRICE'], vendor=item['VENDOR'], name=item['NAME'], info=item['INFO'])
         except PhoneDataInvalidException as error:
             print("Phone data invalid: " + item['NAME'] + ": " + item['PRICE'])
 
@@ -217,6 +217,7 @@ class phoneDBEngine:
         return {
             'BRAND': phone.getBrand(),
             'MODEL': phone.getDBModel(),
+            'NAME': phone.getName(),
             'TYPE': 'Mobile',
             'PRICE': phone.getPrice(),
             'VENDOR': phone.getVendor(),

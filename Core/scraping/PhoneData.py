@@ -3,14 +3,14 @@ class PhoneDataInvalidException(Exception):
 
 
 class PhoneData:
-    def __init__(self, brand: str, model: str, price, vendor: str, info=None):
+    def __init__(self, brand: str, model: str, price, vendor: str, name=None, info=None):
         if info is None:
             self.info = {}
         else:
             self.info = info
         if model != "":
-            self.brand = brand
-            self.model = model
+            self.brand = brand.lower()
+            self.model = model.lower()
         else:
             idx = brand.find(" ")
             temp1 = brand[:idx] if idx >= 0 else brand
@@ -20,9 +20,14 @@ class PhoneData:
                     temp2 = temp1[i:] + (" " + temp2 if temp2 != "" else "")
                     temp1 = temp1[:i]
                     break
-            self.brand = temp1
-            self.model = temp2
+            self.brand = temp1.lower()
+            self.model = temp2.lower()
         self.vendor = vendor
+
+        if name is not None:
+            self.name = name
+        else:
+            self.name = brand + ' ' + model
 
         if isinstance(price, str):
             self.price = 0
@@ -79,7 +84,7 @@ class PhoneData:
         return temp
 
     def getName(self):
-        return self.brand + " " + self.model
+        return self.name
 
     def getPrice(self):
         return self.price

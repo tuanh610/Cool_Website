@@ -1,1 +1,1 @@
-Meizu, Blackberry, Realme, Zenfone, Stel, Masstel, OPPO, LG, Vivo, BlackBerry, Apple, HTC, Philips, Zentel, Nokia, Xiaomi, Oppo, Tecno, Bavapen, Huawei, Motorola, Itel, Vsmart, ASUS, Samsung, Black, Asus, Honor, Leagoo
+motorola, samsung, lg, asus, zentel, nokia, htc, bavapen, apple, meizu, xiaomi, blackberry, masstel, realme, zenfone, leagoo, huawei, tecno, honor, oppo, black, stel, itel, philips, vivo, vsmart
