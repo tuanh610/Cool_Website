@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 class NoProductFoundException(Exception):
     pass
 
-class HoangHaMobileScraper:
+class TheGioiDiDongScraper:
     def __init__(self, ignoreTerm, url, param):
         self.url = url
         self.ignoreTerm = ignoreTerm
@@ -14,25 +14,29 @@ class HoangHaMobileScraper:
 
     def parseData(self, content, url):
         listMobile = []
-        listProduct = content.find('div', attrs={'class': 'product-list'})
-        allProducts = listProduct.findAll('div', attrs={'class': 'list-item'})
+        listProduct = content.find('ul', attrs={'class': 'homeproduct'})
+        temp = listProduct.findAll('li')
+        allProducts = [x.find('a', href=True) for x in temp]
         if len(allProducts) == 0:
             raise NoProductFoundException
         for a in allProducts:
-            image_html = ScrapEngine.hideInvalidTag(a.find('img'), ['strike'])
-            name_html = ScrapEngine.hideInvalidTag(a.find('div', attrs={'class': 'product-name'}), ['strike'])
-            price_html = ScrapEngine.hideInvalidTag(a.find('div', attrs={'class': 'product-price'}), ['strike'])
             try:
-                image_src = image_html['src']
+                image_html = ScrapEngine.hideInvalidTag(a.find('img'), ['strike'])
+                name_html = ScrapEngine.hideInvalidTag(a.find('h3'), ['strike'])
+                price_html = ScrapEngine.hideInvalidTag(a.find('div', attrs={'class': 'price'}), ['strike', 'span'])
+                image_src = "NA"
+                if 'src' in image_html.attrs:
+                    image_src = image_html['src']
+                elif 'data-original' in image_html.attrs:
+                    image_src = image_html['data-original']
                 name = ScrapEngine.processString(name_html.getText(), self.ignoreTerm)
                 name_idx = name.find(" ")
 
                 price = ScrapEngine.processString(price_html.getText(), self.ignoreTerm)
                 href = "n.a"
-                temp = name_html.find('a', href=True)
-                href = urljoin(url, temp['href'])
+                href = urljoin(url, a['href'])
                 try:
-                    listMobile.append(PhoneData(brand=name, model="", price=price, vendor="hoanghaMobile",
+                    listMobile.append(PhoneData(brand=name, model="", price=price, vendor="thegioididong",
                                                 info={"url": href, "img": image_src}))
                 except PhoneDataInvalidException as error:
                     print("Unable to parse: " + name + ": " + price + ". Error:" + str(error))
@@ -43,17 +47,5 @@ class HoangHaMobileScraper:
         print("Done with: " + url)
         return listMobile
 
-    def getOnePage(self, URL):
-        return self.parseData(ScrapEngine.connectToStaticWebSite(URL, self.ignoreTerm), URL)
-
     def getAllPages(self):
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        dir_path = dir_path.replace("\\", "/")
-        allResult = []
-        for i in range(1, 100):
-            full_url = self.url + self.param + str(i)
-            try:
-                allResult += self.getOnePage(full_url)
-            except NoProductFoundException as e:
-                break
-        return allResult
+        return self.parseData(ScrapEngine.connectToWebsiteWithBtnClick(self.url, self.param), self.url)

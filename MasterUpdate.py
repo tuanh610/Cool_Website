@@ -7,59 +7,62 @@ def masterUpdate():
     phoneDBAdaper = phoneDBEngine(constant.dynamoDBTableName)
     all_brands = set()
     # Loop through each source to update information
+    data = []
+    # region ScrapData
     for src in constant.scrapingSources:
         if src.name in constant.parser:
             parser = constant.parser[src.name](src.info.ignoreTerm, src.url, src.info.param)
-            data = parser.getAllPages()
-
-            # Update data for each source
-            dataFromDB = phoneDBAdaper.getAllPhones()
-            updateNeeded = []
-            newItem = []
-            # Update data
-            for item in data:
-                all_brands.add(item.getBrand())
-                existed = False
-                for phone in dataFromDB:
-                    if item == phone:
-                        if item.needUpdate(oldData=phone):
-                            updateNeeded.append((item, phone))
-                        existed = True
-                        break
-                if not existed:
-                    newItem.append(item)
-            #Delete old items that not there anymore
-            toDelete = []
-            for phone in dataFromDB:
-                existed = False
-                for item in data:
-                    if item == phone:
-                        existed = True
-                        break
-                if not existed:
-                    toDelete.append(phone)
-
-            # push new data to database
-            for item, _ in updateNeeded:
-                phoneDBAdaper.updateItemToDB(item)
-
-            for item in toDelete:
-                phoneDBAdaper.deleteItemFromDB(item)
-
-            if len(newItem) > 0:
-                phoneDBAdaper.pushAllDataToDB(newItem)
-
-            # Add changes to notify list
-            ChangesToNotify[src.name] = (newItem, updateNeeded, toDelete)
-
-            #Update all brands
-            phoneDBAdaper.updateAllBrandData(list(all_brands))
-            f = open("Core/brands.txt", "+w")
-            f.write(', '.join(list(all_brands)))
-            f.close()
-
+            data += parser.getAllPages()
         else:
             print("Parser for " + src.name + " is not available. Skip")
+    # endregion
+
+    # region UpdateDatabase
+    dataFromDB = phoneDBAdaper.getAllPhones()
+    updateNeeded = []
+    newItem = []
+    # Update data
+    for item in data:
+        all_brands.add(item.getBrand())
+        existed = False
+        for phone in dataFromDB:
+            if item == phone:
+                if item.needUpdate(oldData=phone):
+                    updateNeeded.append((item, phone))
+                existed = True
+                break
+        if not existed:
+            newItem.append(item)
+    # Delete old items that not there anymore
+    toDelete = []
+    for phone in dataFromDB:
+        existed = False
+        for item in data:
+            if item == phone:
+                existed = True
+                break
+        if not existed:
+            toDelete.append(phone)
+
+    # push new data to database
+    for item, _ in updateNeeded:
+        phoneDBAdaper.updateItemToDB(item)
+
+    for item in toDelete:
+        phoneDBAdaper.deleteItemFromDB(item)
+
+    if len(newItem) > 0:
+        phoneDBAdaper.pushAllDataToDB(newItem)
+
+    # Add changes to notify list
+    ChangesToNotify[src.name] = (newItem, updateNeeded, toDelete)
+
+    # Update all brands
+    phoneDBAdaper.updateAllBrandData(list(all_brands))
+    f = open("Core/brands.txt", "+w")
+    f.write(', '.join(list(all_brands)))
+    f.close()
+    # endregion
     return ChangesToNotify
 
 

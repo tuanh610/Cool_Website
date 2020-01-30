@@ -9,7 +9,7 @@ class TestScrapEngine(unittest.TestCase):
         url = os.path.dirname(os.path.realpath(__file__)) + "/../testdata/testWebsite.html"
         ignoreTerm = ["Chính hãng", "Chính Hãng", "-"]
         try:
-            result = ScrapEngine.connectToWebSite(url, ignoreTerm)
+            result = ScrapEngine.connectToStaticWebSite(url, ignoreTerm)
             self.assertIsNotNone(result, "Beautiful soup result is none")
         except:
             self.fail("Unable to connect to website")
