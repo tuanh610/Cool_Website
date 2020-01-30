@@ -99,7 +99,7 @@ class TestDatabaseFunctional(unittest.TestCase):
                 self.fail("Price not within range. " + str(item))
 
     def test_getPhonesWithinPriceRangeWithBrand(self):
-        lowerLim = 5000000
+        lowerLim = 3000000
         higherLim = 10000000
         brand = "Samsung"
         phoneAdapter = phoneDBEngine(constants.dynamoDBTableName)
