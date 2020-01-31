@@ -1,9 +1,10 @@
+import Core.constant as constants
 class PhoneDataInvalidException(Exception):
     pass
 
 
 class PhoneData:
-    def __init__(self, brand: str, model: str, price, vendor: str, info=None):
+    def __init__(self, brand: str, model: str, price, vendor: str, name=None, info=None):
         if info is None:
             self.info = {}
         else:
@@ -22,7 +23,16 @@ class PhoneData:
                     break
             self.brand = temp1
             self.model = temp2
+
         self.vendor = vendor
+
+        if name is not None:
+            self.name = name
+        else:
+            self.name = self.brand + ' ' + self.model
+
+        self.brand = self.brand.lower()
+        self.model = self.model.lower()
 
         if isinstance(price, str):
             self.price = 0
@@ -44,8 +54,14 @@ class PhoneData:
     def __str__(self):
         return self.getName() + " from " + self.getVendor() + ": " + str(self.getPrice())
 
-    def needUpdate(self, oldData):
-        if (self == oldData) and (self.price != oldData.price or self.info != oldData.info):
+    def checkPriceChange(self, oldData):
+        if self == oldData and self.price != oldData.price:
+            return True
+        else:
+            return False
+
+    def checkInfoChange(self, oldData):
+        if self == oldData and self.info != oldData.info:
             return True
         else:
             return False
@@ -65,9 +81,22 @@ class PhoneData:
                 else:
                     self.price = int(splited[1])
                     self.info["currency"] = splited[0]
-            elif splited_len == 1 and splited[0].isdecimal():
-                self.price = int(splited[0])
-                self.info["currency"] = "NA"
+            elif splited_len == 1:
+                if splited[0].isdecimal():
+                    self.price = int(splited[0])
+                    self.info["currency"] = "NA"
+                else:
+                    for currency in constants.currencyCode:
+                        if splited[0].startswith(currency):
+                            self.price = int(splited[0][len(currency):])
+                            self.info["currency"] = currency
+                            return
+                        elif splited[0].endswith(currency):
+                            self.price = int(splited[0][:-len(currency)])
+                            self.info["currency"] = currency
+                            return
+                    raise PhoneDataInvalidException
+
         except Exception as e:
             print(str(e))
             raise PhoneDataInvalidException
@@ -79,7 +108,7 @@ class PhoneData:
         return temp
 
     def getName(self):
-        return self.brand + " " + self.model
+        return self.name
 
     def getPrice(self):
         return self.price
@@ -98,3 +127,6 @@ class PhoneData:
 
     def getDBModel(self):
         return self.model + "_" + self.vendor
+
+    def getPriceString(self):
+        return ("{:,}".format(self.price)) + " " + self.info.get("currency", "")

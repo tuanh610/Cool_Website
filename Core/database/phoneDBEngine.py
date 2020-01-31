@@ -1,5 +1,6 @@
 import boto3
 from Core.scraping.PhoneData import PhoneData, PhoneDataInvalidException
+from Core.scraping.PhoneCollection import PhoneCollection
 from boto3.dynamodb.conditions import Attr, Key
 from botocore.exceptions import ClientError
 import Core.database.DatabaseEngine as DatabaseEngine
@@ -23,7 +24,7 @@ class phoneDBEngine:
 
     def updateItemToDB(self, item: PhoneData):
         try:
-            response = self.table.update_item(
+            _ = self.table.update_item(
                 Key={
                     'BRAND': item.getBrand(),
                     'MODEL': item.getDBModel()
@@ -43,7 +44,7 @@ class phoneDBEngine:
 
     def updateAllBrandData(self, all_brands):
         try:
-            response = self.table.update_item(
+            _ = self.table.update_item(
                 Key={
                     'BRAND': constant.dynamoDBAllBrandPK,
                     'MODEL': constant.dynamoDBAllBrandRK,
@@ -58,17 +59,25 @@ class phoneDBEngine:
             print(e.response['Error']['Message'])
         else:
             print("All brands list updated succeeded:")
+
     # endregion
 
-    def getItemWithBrandAndPriceAndType(self, devType: str, brand: str, lowerLim, higherLim):
+    def getItemWithBrandAndPriceAndType(self, devType: str, lowerLim, higherLim, brand: str = None):
         try:
             gsiElement = constant.phoneSecondaryElements[0]
-            response = self.table.query(
-                IndexName=gsiElement.name,
-                KeyConditionExpression=Key(gsiElement.elements[0].name).eq(devType) &
-                                       Key(gsiElement.elements[1].name).between(lowerLim, higherLim),
-                FilterExpression=Key(constant.phonePrimaryElements[0].name).eq(brand),
-            )
+            if brand is None:
+                response = self.table.query(
+                    IndexName=gsiElement.name,
+                    KeyConditionExpression=Key(gsiElement.elements[0].name).eq(devType) &
+                                           Key(gsiElement.elements[1].name).between(lowerLim, higherLim)
+                )
+            else:
+                response = self.table.query(
+                    IndexName=gsiElement.name,
+                    KeyConditionExpression=Key(gsiElement.elements[0].name).eq(devType) &
+                                           Key(gsiElement.elements[1].name).between(lowerLim, higherLim),
+                    FilterExpression=Key(constant.phonePrimaryElements[0].name).eq(brand),
+                )
             return response['Items']
         except ClientError as e:
             print(e.response['Error']['Message'])
@@ -96,7 +105,7 @@ class phoneDBEngine:
             print(e.response['Error']['Message'])
             raise ClientError
         except KeyError as e:
-            print("Data is empty. No Item found")
+            print("Data is empty. No Item found. Error: {}".format(str(e)))
             return None
 
     def getItemsWithBrandAndModel(self, brand, model=None):
@@ -114,7 +123,7 @@ class phoneDBEngine:
             print(e.response['Error']['Message'])
             raise ClientError
         except KeyError as e:
-            print("Data is empty. No Item found")
+            print("Data is empty. No Item found. Error: {}".format(str(e)))
             return None
 
     def getPhonesInPriceRange(self, lowerLim, upperLim):
@@ -134,20 +143,14 @@ class phoneDBEngine:
         except ClientError as e:
             print(e.response['Error']['Message'])
 
-
-    def getAllPhones(self):
+    def getAllDevicesWithType(self, devType):
         try:
             gsiElement = constant.phoneSecondaryElements[0]
             response = self.table.query(
                 IndexName=gsiElement.name,
-                KeyConditionExpression=Key(gsiElement.elements[0].name).eq('Mobile'),
+                KeyConditionExpression=Key(gsiElement.elements[0].name).eq(devType),
             )
-            result = []
-            for item in response['Items']:
-                phone = phoneDBEngine.convertDBDataToPhone(item)
-                if phone is not None:
-                    result.append(phone)
-            return result
+            return response['Items']
         except ClientError as e:
             print(e.response['Error']['Message'])
 
@@ -166,10 +169,9 @@ class phoneDBEngine:
         except ClientError as e:
             print(e.response['Error']['Message'])
 
-
     def deleteItemFromDB(self, item: PhoneData):
         try:
-            response = self.table.delete_item(
+            _ = self.table.delete_item(
                 Key={
                     'BRAND': item.getBrand(),
                     'MODEL': item.getDBModel()
@@ -179,7 +181,6 @@ class phoneDBEngine:
             print(e.response['Error']['Message'])
         else:
             pass
-            #print("DeleteItem succeeded:")
 
     def filterItemsWithConditions(self, brand, model, devType, lowPrice, highPrice):
         if model != '' and brand != '':
@@ -208,15 +209,16 @@ class phoneDBEngine:
             else:
                 phone_model = temp[:idx]
             return PhoneData(brand=item['BRAND'], model=phone_model,
-                             price=item['PRICE'], vendor=item['VENDOR'], info=item['INFO'])
+                             price=item['PRICE'], vendor=item['VENDOR'], name=item['NAME'], info=item['INFO'])
         except PhoneDataInvalidException as error:
-            print("Phone data invalid: " + item['NAME'] + ": " + item['PRICE'])
+            print("Phone data invalid: {}: {}. Error: {}".format(item['NAME'], item['PRICE'], str(error)))
 
     @staticmethod
     def convertPhoneToDBData(phone: PhoneData):
         return {
             'BRAND': phone.getBrand(),
             'MODEL': phone.getDBModel(),
+            'NAME': phone.getName(),
             'TYPE': 'Mobile',
             'PRICE': phone.getPrice(),
             'VENDOR': phone.getVendor(),
@@ -231,4 +233,18 @@ class phoneDBEngine:
             if temp is not None:
                 result.append(temp)
         return result
+
     # endregion
+
+    @staticmethod
+    def orderPhonesToCollections(phones: [PhoneData]):
+        result = []
+        for phone in phones:
+            collectionExist = False
+            for collection in result:
+                if collection.addIfBelongToCollection(phone):
+                    collectionExist = True
+                    break
+            if not collectionExist:
+                result.append(PhoneCollection(firstPhone=phone))
+        return result

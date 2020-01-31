@@ -1,46 +1,56 @@
 from Core.mail.mailingModule import mailModule
 import Core.constant as constant
 from Core.database.phoneDBEngine import phoneDBEngine
+from Core.scraping.ScrapEngine import parser as scrap_parser
 
 def masterUpdate():
     ChangesToNotify = {}
     phoneDBAdaper = phoneDBEngine(constant.dynamoDBTableName)
     all_brands = set()
+    # Get all phones from DB
+    dataFromDB = phoneDBAdaper.getAllDevicesWithType('Mobile')
+    phonesFromDB = phoneDBEngine.convertAllDataToPhone(dataFromDB)
+
     # Loop through each source to update information
     for src in constant.scrapingSources:
-        if src.name in constant.parser:
-            parser = constant.parser[src.name](src.info.ignoreTerm, src.url, src.info.param)
-            data = parser.getAllPages()
+        if src.name in scrap_parser:
+            parser = scrap_parser[src.name](src.info.ignoreTerm, src.url, src.info.param)
+            phonesFromScraper = parser.getAllPages()
 
             # Update data for each source
-            dataFromDB = phoneDBAdaper.getAllPhones()
-            updateNeeded = []
+            priceChange = []
+            infoChange = []
             newItem = []
             # Update data
-            for item in data:
+            for item in phonesFromScraper:
                 all_brands.add(item.getBrand())
                 existed = False
-                for phone in dataFromDB:
+                for phone in phonesFromDB:
                     if item == phone:
-                        if item.needUpdate(oldData=phone):
-                            updateNeeded.append((item, phone))
+                        if item.checkPriceChange(oldData=phone):
+                            priceChange.append((item, phone))
+                        elif item.checkInfoChange(oldData=phone):
+                            infoChange.append((item, phone))
                         existed = True
                         break
                 if not existed:
                     newItem.append(item)
-            #Delete old items that not there anymore
+            # Delete old items that not there anymore
             toDelete = []
-            for phone in dataFromDB:
+            for phone in phonesFromDB:
                 existed = False
-                for item in data:
+                for item in phonesFromScraper:
                     if item == phone:
                         existed = True
                         break
-                if not existed:
+                if not existed and phone.getVendor() == src.name:
                     toDelete.append(phone)
 
             # push new data to database
-            for item, _ in updateNeeded:
+            for item, _ in priceChange:
+                phoneDBAdaper.updateItemToDB(item)
+
+            for item, _ in infoChange:
                 phoneDBAdaper.updateItemToDB(item)
 
             for item in toDelete:
@@ -50,16 +60,18 @@ def masterUpdate():
                 phoneDBAdaper.pushAllDataToDB(newItem)
 
             # Add changes to notify list
-            ChangesToNotify[src.name] = (newItem, updateNeeded, toDelete)
-
-            #Update all brands
-            phoneDBAdaper.updateAllBrandData(list(all_brands))
-            f = open("Core/brands.txt", "+w")
-            f.write(', '.join(list(all_brands)))
-            f.close()
+            ChangesToNotify[src.name] = (newItem, priceChange, toDelete)
 
         else:
             print("Parser for " + src.name + " is not available. Skip")
+
+    # Update all brands
+    if len(all_brands) > 0:
+        phoneDBAdaper.updateAllBrandData(list(all_brands))
+        f = open("Core/brands.txt", "+w")
+        f.write(', '.join(list(all_brands)))
+        f.close()
+
     return ChangesToNotify
 
 
@@ -90,10 +102,7 @@ def notifyByEmail(changes):
             content += "Items Removed: "
             for item in toDelete:
                 content += "Name: %s. From vendor: %s\n" % (item.getName(), item.getVendor())
-
-        if content == "":
-            content = "No update needed"
-        content += "================================================================\n"
+        content += "==========================================================================\n"
 
     if content != "":
         mail = mailModule()

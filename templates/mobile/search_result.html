@@ -14,9 +14,9 @@
         </div>
     {% else %}
         <div class="row">
-            {% for phone in allData %}
-                <div class="col s3">
-                    {% include "mobile/cardItems.html" with phone=phone %}
+            {% for collection in allData %}
+                <div class="col s4 m3 l2">
+                    {% include "mobile/cardItems.html" with collection=collection cardnumber=forloop.counter %}
                 </div>
             {% endfor %}
         </div>

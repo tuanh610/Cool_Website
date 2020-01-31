@@ -1,9 +1,12 @@
 <!-- Dropdown Structure -->
 <ul id="dropdown1" class="dropdown-content">
   <li><a href="{% url 'frontend:all_mobiles' 1%}">All Mobiles</a></li>
-
   <li class="divider"></li>
-  <li><a href="{% url 'frontend:new_search' %}">Search devices</a></li>
+  <li><a href="{% url 'frontend:mobile_byprice' 'Mobile' 0 4000000 1%}">Below 4.000.000</a></li>
+  <li><a href="{% url 'frontend:mobile_byprice' 'Mobile' 4000000 10000000 1%}">4.000.000 - 10.000.000</a></li>
+  <li><a href="{% url 'frontend:mobile_byprice' 'Mobile' 10000000 1000000000 1%}">Above 10.000.000</a></li>
+  <li class="divider"></li>
+  <li><a href="{% url 'frontend:new_search' %}">Detail Search</a></li>
 </ul>
 
 <header>

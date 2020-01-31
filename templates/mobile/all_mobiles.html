@@ -8,19 +8,27 @@
 
 <main>
     {% include "base/intro.html" %}
-    {% include "base/paginator.html" with items=allData %}
+    {% if low and high and dev %}
+        {% include "base/paginator_byPrice.html" with items=allData low=low high=high dev=dev %}
+    {% else %}
+        {% include "base/paginator.html" with items=allData %}
+    {% endif %}
 
     <h3 class="center" style="padding: 1em 0 2em 0">Data from {{ source }}</h3>
 
     <div class="row">
-        {% for phone in allData %}
-            <div class="col s3">
-                {% include "mobile/cardItems.html" with phone=phone %}
+        {% for collection in allData %}
+            <div class="col s4 m3 l2 l2">
+                {% include "mobile/cardItems.html" with collection=collection cardnumber=forloop.counter %}
             </div>
         {% endfor %}
     </div>
 
-    {% include "base/paginator.html" with items=allData source=source%}
+    {% if low and high and dev %}
+        {% include "base/paginator_byPrice.html" with items=allData low=low high=high dev=dev %}
+    {% else %}
+        {% include "base/paginator.html" with items=allData %}
+    {% endif %}
 </main>
 
 {% include "base/footer.html" %}
