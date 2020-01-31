@@ -45,6 +45,7 @@ class TheGioiDiDongScraper:
                 print("Error: " + str(e))
                 pass
         print("Done with: " + url)
+        print("Found {} items".format(str(len(listMobile))))
         return listMobile
 
     def getAllPages(self):

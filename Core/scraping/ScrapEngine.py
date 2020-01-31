@@ -6,6 +6,9 @@ from selenium.common.exceptions import NoSuchElementException
 from Core.scraping.HoangHaMobileScraper import HoangHaMobileScraper
 from Core.scraping.TheGioiDiDongScaper import TheGioiDiDongScraper
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import os
 
 
@@ -31,7 +34,7 @@ def connectToStaticWebSite(url, ignoreTerm=None):
     soup = BeautifulSoup(content, features="html.parser")
     return soup
 
-def connectToWebsiteWithBtnClick(url, buttonId):
+def connectToWebsiteWithBtnClick(url, buttonClass):
     options = Options()
     options.add_argument("--no-sandbox")
     options.add_argument("--headless")
@@ -43,12 +46,18 @@ def connectToWebsiteWithBtnClick(url, buttonId):
     try:
         counter = 0
         while counter < 10:
-            btn = driver.find_element_by_class_name(buttonId)
-            ActionChains(driver).click(btn).perform()
-            #btn.click()
-            counter+=1
+            wait = WebDriverWait(driver, 10)
+            element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, buttonClass)))
+            btn = driver.find_element_by_class_name(buttonClass)
+            #ActionChains(driver).move_to_element(btn).click(btn).perform()
+            btn.click()
+            counter += 1
     except NoSuchElementException:
+        print("Process {} pages".format(counter))
         pass
+    except Exception as e:
+        print("Error " + str(e))
+
     content = driver.page_source
     driver.close()
     soup = BeautifulSoup(content, features="html.parser")
