@@ -1,4 +1,4 @@
-<dib class="pagination right" style="padding: 1em 2em 0 0">
+<div class="pagination right" style="padding: 1em 2em 0 0">
     {% if items.has_previous %}
         <li class="waves-effect"><a href="{% url 'frontend:all_mobiles' 1%}"><i class="material-icons">chevron_left</i><i class="material-icons">chevron_left</i></a></li>
         <li class="waves-effect"><a href="{% url 'frontend:all_mobiles' items.previous_page_number %}"><i class="material-icons">chevron_left</i></a></li>
@@ -22,4 +22,4 @@
         <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
         <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i><i class="material-icons">chevron_right</i></a></li>
     {% endif %}
-</dib>
+</div>
