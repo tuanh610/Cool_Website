@@ -16,7 +16,8 @@ def masterUpdate():
         if src.name in scrap_parser:
             parser = scrap_parser[src.name](src.info.ignoreTerm, src.url, src.info.param)
             phonesFromScraper = parser.getAllPages()
-
+            if phonesFromScraper is None or len(phonesFromScraper) == 0:
+                continue
             # Update data for each source
             priceChange = []
             infoChange = []

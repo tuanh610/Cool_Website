@@ -48,5 +48,9 @@ class TheGioiDiDongScraper:
         return listMobile
 
     def getAllPages(self):
-
-        return self.parseData(ScrapEngine.connectToWebsiteWithBtnClick(self.url, self.param), self.url)
+        for i in range(3):
+            try:
+                return self.parseData(ScrapEngine.connectToWebsiteWithBtnClick(self.url, self.param), self.url)
+            except Exception as e:
+                print("Attempt {}. Error scraping data: {}".format(str(i), str(e)))
+                pass
