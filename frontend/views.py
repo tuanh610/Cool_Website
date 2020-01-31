@@ -31,9 +31,10 @@ def search_result(request):
                 print(devType, brand, model, lowPrice, highPrice)
 
                 phoneAdapter = phoneDBEngine(tableName=constants.dynamoDBTableName)
-                results = phoneAdapter.filterItemsWithConditions(brand, model.lower(), devType, lowPrice, highPrice)
-                results.sort(key=lambda phone: phone.price)
-                return render(request, 'mobile/search_result.html', {'allData': results})
+                phones = phoneAdapter.filterItemsWithConditions(brand, model.lower(), devType, lowPrice, highPrice)
+                phones.sort(key=lambda phone: phone.price)
+                collections = phoneDBEngine.orderPhonesToCollections(phones)
+                return render(request, 'mobile/search_result.html', {'allData': collections})
             else:
                 render(request, 'mobile/search_result.html', {
                     'error_message': "Filter Conditions are wrong"
@@ -48,19 +49,20 @@ def search_result(request):
 
 def search_PriceRange(request, dev, low, high):
     phoneDB = phoneDBEngine(tableName=constants.dynamoDBTableName)
-    phones = phoneDBEngine.convertDBDataToPhone(phoneDB.getItemWithBrandAndPriceAndType(devType=dev, lowerLim=low, higherLim=high))
-    processedList = helper.getLowestPriceList(phones)
-    allData = processedList.values()
+    phones = phoneDBEngine.convertAllDataToPhone(phoneDB.getItemWithBrandAndPriceAndType(devType=dev, lowerLim=low, higherLim=high))
+    phones.sort(key=lambda phone: phone.price)
+    collections = phoneDBEngine.orderPhonesToCollections(phones)
 
-    return render(request, 'mobile/all_mobiles.html',
-                  {'allData': processedList.values()})
+    return render(request, 'mobile/search_result.html',
+                  {'allData': collections})
 
 def all_mobiles(request, page):
     # Retrieve all data from amazonDB
     phoneDB = phoneDBEngine(tableName=constants.dynamoDBTableName)
-    phones = phoneDB.getAllPhones()
-    processedList = helper.getLowestPriceList(phones)
-    paginator = Paginator(list(processedList.values()), 12)
+    data = phoneDB.getAllDevicesWithType('Mobile')
+    phones = phoneDBEngine.convertAllDataToPhone(data)
+    collections = phoneDBEngine.orderPhonesToCollections(phones)
+    paginator = Paginator(collections, 12)
     allData = paginator.get_page(page)
 
     return render(request, 'mobile/all_mobiles.html',

@@ -1,13 +1,34 @@
 {% load filter %}
 <div class="card">
-    <div class="card-image">
-      <img src="{{ phone.info|get_item:'img' }}" height="200">
-    </div>
     <div class="card-content" style="height: 150px">
-      <h5>{{ phone.name }}</h5>
-      <span class="card-title purple-text darken-3" style="font-size: small">*{{ phone.vendor }}</span>
+      <h5>{{ collection.name }}</h5>
+      <span class="card-title purple-text darken-3" style="font-size: small">*Price from {{ collection.minPrice }}</span>
     </div>
-    <div class="card-action">
-      <a href="{{ phone.info|get_item:'url' }}">Price from: {{ phone|get_price_string }}</a>
+    <div class="card-tabs">
+        <ul class="tabs tabs-fixed-width">
+            {% for phone in collection.phoneList %}
+                <li class="tab grey lighten-3"><a href="#{{ cardnumber }}_{{ forloop.counter }}"><strong>#{{ forloop.counter }}</strong></a></li>
+            {% endfor %}
+        </ul>
     </div>
+
+    <div class="card-content">
+        {% for phone in collection.phoneList %}
+        <div id="{{ cardnumber }}_{{ forloop.counter }}">
+            <div class="card-image">
+                <img src="{{ phone.info|get_item:'img' }}" height="200">
+            </div>
+            <div class="card-action">
+                <a href="{{ phone.info|get_item:'url' }}">{{ phone.vendor }}: {{ phone|get_price_string }}</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
 </div>
+
+<script>
+$(document).ready(function(){
+$('.tabs').tabs();
+});
+</script>

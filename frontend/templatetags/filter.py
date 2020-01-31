@@ -17,3 +17,7 @@ def get_slice(arr, start, end):
 @register.filter(name='get_price_string')
 def get_price_string(phone):
     return phone.getPriceString()
+
+@register.filter(name='remove_space')
+def remove_space(data):
+    return ''.join(e for e in data if e.isalnum())

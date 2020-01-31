@@ -23,12 +23,13 @@ class PhoneData:
                     break
             self.brand = temp1
             self.model = temp2
+
         self.vendor = vendor
 
-        if name is None:
-            self.name = self.brand + " " + self.model
-        else:
+        if name is not None:
             self.name = name
+        else:
+            self.name = self.brand + ' ' + self.model
 
         self.brand = self.brand.lower()
         self.model = self.model.lower()
@@ -53,8 +54,14 @@ class PhoneData:
     def __str__(self):
         return self.getName() + " from " + self.getVendor() + ": " + str(self.getPrice())
 
-    def needUpdate(self, oldData):
-        if (self == oldData) and (self.price != oldData.price or self.info != oldData.info):
+    def checkPriceChange(self, oldData):
+        if self == oldData and self.price != oldData.price:
+            return True
+        else:
+            return False
+
+    def checkInfoChange(self, oldData):
+        if self == oldData and self.info != oldData.info:
             return True
         else:
             return False

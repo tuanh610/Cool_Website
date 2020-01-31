@@ -7,63 +7,71 @@ def masterUpdate():
     ChangesToNotify = {}
     phoneDBAdaper = phoneDBEngine(constant.dynamoDBTableName)
     all_brands = set()
+    # Get all phones from DB
+    dataFromDB = phoneDBAdaper.getAllDevicesWithType('Mobile')
+    phonesFromDB = phoneDBEngine.convertAllDataToPhone(dataFromDB)
+
     # Loop through each source to update information
-    data = []
-    # region ScrapData
     for src in constant.scrapingSources:
         if src.name in scrap_parser:
             parser = scrap_parser[src.name](src.info.ignoreTerm, src.url, src.info.param)
-            data += parser.getAllPages()
+            phonesFromScraper = parser.getAllPages()
+
+            # Update data for each source
+            priceChange = []
+            infoChange = []
+            newItem = []
+            # Update data
+            for item in phonesFromScraper:
+                all_brands.add(item.getBrand())
+                existed = False
+                for phone in phonesFromDB:
+                    if item == phone:
+                        if item.checkPriceChange(oldData=phone):
+                            priceChange.append((item, phone))
+                        elif item.checkInfoChange(oldData=phone):
+                            infoChange.append((item, phone))
+                        existed = True
+                        break
+                if not existed:
+                    newItem.append(item)
+            # Delete old items that not there anymore
+            toDelete = []
+            for phone in phonesFromDB:
+                existed = False
+                for item in phonesFromScraper:
+                    if item == phone:
+                        existed = True
+                        break
+                if not existed and phone.getVendor() == src.name:
+                    toDelete.append(phone)
+
+            # push new data to database
+            for item, _ in priceChange:
+                phoneDBAdaper.updateItemToDB(item)
+
+            for item, _ in infoChange:
+                phoneDBAdaper.updateItemToDB(item)
+
+            for item in toDelete:
+                phoneDBAdaper.deleteItemFromDB(item)
+
+            if len(newItem) > 0:
+                phoneDBAdaper.pushAllDataToDB(newItem)
+
+            # Add changes to notify list
+            ChangesToNotify[src.name] = (newItem, priceChange, toDelete)
+
         else:
             print("Parser for " + src.name + " is not available. Skip")
-    # endregion
-
-    # region UpdateDatabase
-    dataFromDB = phoneDBAdaper.getAllPhones()
-    updateNeeded = []
-    newItem = []
-    # Update data
-    for item in data:
-        all_brands.add(item.getBrand())
-        existed = False
-        for phone in dataFromDB:
-            if item == phone:
-                if item.needUpdate(oldData=phone):
-                    updateNeeded.append((item, phone))
-                existed = True
-                break
-        if not existed:
-            newItem.append(item)
-    # Delete old items that not there anymore
-    toDelete = []
-    for phone in dataFromDB:
-        existed = False
-        for item in data:
-            if item == phone:
-                existed = True
-                break
-        if not existed:
-            toDelete.append(phone)
-
-    # push new data to database
-    for item, _ in updateNeeded:
-        phoneDBAdaper.updateItemToDB(item)
-
-    for item in toDelete:
-        phoneDBAdaper.deleteItemFromDB(item)
-
-    if len(newItem) > 0:
-        phoneDBAdaper.pushAllDataToDB(newItem)
-
-    # Add changes to notify list
-    ChangesToNotify[src.name] = (newItem, updateNeeded, toDelete)
 
     # Update all brands
-    phoneDBAdaper.updateAllBrandData(list(all_brands))
-    f = open("Core/brands.txt", "+w")
-    f.write(', '.join(list(all_brands)))
-    f.close()
-    # endregion
+    if len(all_brands) > 0:
+        phoneDBAdaper.updateAllBrandData(list(all_brands))
+        f = open("Core/brands.txt", "+w")
+        f.write(', '.join(list(all_brands)))
+        f.close()
+
     return ChangesToNotify
 
 
@@ -94,10 +102,7 @@ def notifyByEmail(changes):
             content += "Items Removed: "
             for item in toDelete:
                 content += "Name: %s. From vendor: %s\n" % (item.getName(), item.getVendor())
-
-        if content == "":
-            content = "No update needed"
-        content += "================================================================\n"
+        content += "==========================================================================\n"
 
     if content != "":
         mail = mailModule()

@@ -48,4 +48,5 @@ class TheGioiDiDongScraper:
         return listMobile
 
     def getAllPages(self):
+
         return self.parseData(ScrapEngine.connectToWebsiteWithBtnClick(self.url, self.param), self.url)
