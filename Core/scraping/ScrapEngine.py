@@ -9,6 +9,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+import time
 import os
 
 
@@ -47,10 +48,11 @@ def connectToWebsiteWithBtnClick(url, buttonClass):
         counter = 0
         while counter < 10:
             wait = WebDriverWait(driver, 10)
-            element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, buttonClass)))
+            element = wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "loadingcover")))
             btn = driver.find_element_by_class_name(buttonClass)
-            #ActionChains(driver).move_to_element(btn).click(btn).perform()
+            #ActionChains(driver).move_to_element(btn).click().perform()
             btn.click()
+            time.sleep(3)
             counter += 1
     except NoSuchElementException:
         print("Process {} pages".format(counter))
