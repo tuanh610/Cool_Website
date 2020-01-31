@@ -31,7 +31,7 @@ def search_result(request):
                 print(devType, brand, model, lowPrice, highPrice)
 
                 phoneAdapter = phoneDBEngine(tableName=constants.dynamoDBTableName)
-                results = phoneAdapter.filterItemsWithConditions(brand, model, devType, lowPrice, highPrice)
+                results = phoneAdapter.filterItemsWithConditions(brand, model.lower(), devType, lowPrice, highPrice)
                 results.sort(key=lambda phone: phone.price)
                 return render(request, 'mobile/search_result.html', {'allData': results})
             else:
@@ -46,8 +46,14 @@ def search_result(request):
         })
 
 
+def search_PriceRange(request, dev, low, high):
+    phoneDB = phoneDBEngine(tableName=constants.dynamoDBTableName)
+    phones = phoneDBEngine.convertDBDataToPhone(phoneDB.getItemWithBrandAndPriceAndType(devType=dev, lowerLim=low, higherLim=high))
+    processedList = helper.getLowestPriceList(phones)
+    allData = processedList.values()
 
-
+    return render(request, 'mobile/all_mobiles.html',
+                  {'allData': processedList.values()})
 
 def all_mobiles(request, page):
     # Retrieve all data from amazonDB

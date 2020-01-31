@@ -3,11 +3,16 @@ from bs4 import BeautifulSoup
 # from urllib.parse import urljoin
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
+from Core.scraping.HoangHaMobileScraper import HoangHaMobileScraper
+from Core.scraping.TheGioiDiDongScaper import TheGioiDiDongScraper
 import os
 
 
 class NoProductFoundException(Exception):
     pass
+
+
+parser = {"hoanghaMobile": HoangHaMobileScraper, 'thegioididong': TheGioiDiDongScraper}
 
 
 def connectToStaticWebSite(url, ignoreTerm=None):

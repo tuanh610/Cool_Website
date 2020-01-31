@@ -1,6 +1,7 @@
 from Core.mail.mailingModule import mailModule
 import Core.constant as constant
 from Core.database.phoneDBEngine import phoneDBEngine
+from Core.scraping.ScrapEngine import parser as scrap_parser
 
 def masterUpdate():
     ChangesToNotify = {}
@@ -10,8 +11,8 @@ def masterUpdate():
     data = []
     # region ScrapData
     for src in constant.scrapingSources:
-        if src.name in constant.parser:
-            parser = constant.parser[src.name](src.info.ignoreTerm, src.url, src.info.param)
+        if src.name in scrap_parser:
+            parser = scrap_parser[src.name](src.info.ignoreTerm, src.url, src.info.param)
             data += parser.getAllPages()
         else:
             print("Parser for " + src.name + " is not available. Skip")

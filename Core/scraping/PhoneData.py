@@ -120,3 +120,6 @@ class PhoneData:
 
     def getDBModel(self):
         return self.model + "_" + self.vendor
+
+    def getPriceString(self):
+        return ("{:,}".format(self.price)) + " " + self.info.get("currency", "")

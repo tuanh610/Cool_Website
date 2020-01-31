@@ -60,15 +60,22 @@ class phoneDBEngine:
             print("All brands list updated succeeded:")
     # endregion
 
-    def getItemWithBrandAndPriceAndType(self, devType: str, brand: str, lowerLim, higherLim):
+    def getItemWithBrandAndPriceAndType(self, devType: str, lowerLim, higherLim, brand: str = None):
         try:
             gsiElement = constant.phoneSecondaryElements[0]
-            response = self.table.query(
-                IndexName=gsiElement.name,
-                KeyConditionExpression=Key(gsiElement.elements[0].name).eq(devType) &
-                                       Key(gsiElement.elements[1].name).between(lowerLim, higherLim),
-                FilterExpression=Key(constant.phonePrimaryElements[0].name).eq(brand),
-            )
+            if brand is None:
+                response = self.table.query(
+                    IndexName=gsiElement.name,
+                    KeyConditionExpression=Key(gsiElement.elements[0].name).eq(devType) &
+                                           Key(gsiElement.elements[1].name).between(lowerLim, higherLim)
+                )
+            else:
+                response = self.table.query(
+                    IndexName=gsiElement.name,
+                    KeyConditionExpression=Key(gsiElement.elements[0].name).eq(devType) &
+                                           Key(gsiElement.elements[1].name).between(lowerLim, higherLim),
+                    FilterExpression=Key(constant.phonePrimaryElements[0].name).eq(brand),
+                )
             return response['Items']
         except ClientError as e:
             print(e.response['Error']['Message'])
@@ -233,3 +240,5 @@ class phoneDBEngine:
                 result.append(temp)
         return result
     # endregion
+
+

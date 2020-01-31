@@ -1,6 +1,4 @@
 from Core.database.DatabaseEngine import DynamoElement, DynamoGSI
-from Core.scraping.HoangHaMobileScraper import HoangHaMobileScraper
-from Core.scraping.TheGioiDiDongScaper import TheGioiDiDongScraper
 from Core.scraping.SourceData import SourceData, SourceInfo
 
 phonePrimaryElements = [DynamoElement('BRAND', 'HASH', 'S'), DynamoElement('MODEL', 'RANGE', 'S')]
@@ -10,9 +8,8 @@ dynamoDBTableName = "WebScraperDB"
 dynamoDBAllBrandPK = "all_brands"
 dynamoDBAllBrandRK = "dummy1"
 
-parser = {"hoanghaMobile": HoangHaMobileScraper, 'thegioididong': TheGioiDiDongScraper}
-
 scrapingSources = [
+    SourceData(url="https://www.thegioididong.com/dtdd", name="thegioididong", info=SourceInfo(param="viewmore", ignoreTerm=["Chính hãng", "Chính Hãng", "-"])),
     SourceData(url="https://hoanghamobile.com/dien-thoai-di-dong-c14.html", name="hoanghaMobile", info=SourceInfo(param="?sort=0&p=", ignoreTerm=["Chính hãng", "Chính Hãng", "-"]))
 ]
 

@@ -13,3 +13,7 @@ def get_slice(arr, start, end):
         return []
     else:
         return arr[start:end]
+
+@register.filter(name='get_price_string')
+def get_price_string(phone):
+    return phone.getPriceString()
