@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from Core.scraping.HoangHaMobileScraper import HoangHaMobileScraper
 from Core.scraping.TheGioiDiDongScaper import TheGioiDiDongScraper
+from selenium.webdriver.common.action_chains import ActionChains
 import os
 
 
@@ -43,7 +44,8 @@ def connectToWebsiteWithBtnClick(url, buttonId):
         counter = 0
         while counter < 10:
             btn = driver.find_element_by_class_name(buttonId)
-            btn.click()
+            ActionChains(driver).click(btn).perform()
+            #btn.click()
             counter+=1
     except NoSuchElementException:
         pass
