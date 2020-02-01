@@ -2,6 +2,7 @@ from Core.mail.mailingModule import mailModule
 import Core.constant as constant
 from Core.database.phoneDBEngine import phoneDBEngine
 from Core.scraping.ScrapEngine import parser as scrap_parser
+import os
 
 def masterUpdate():
     ChangesToNotify = {}
@@ -69,7 +70,8 @@ def masterUpdate():
     # Update all brands
     if len(all_brands) > 0:
         phoneDBAdaper.updateAllBrandData(list(all_brands))
-        f = open("Core/brands.txt", "+w")
+        fullpath = "{}/Core/brands.txt".format(os.path.dirname(os.path.realpath(__file__)))
+        f = open(fullpath, "+w")
         f.write(', '.join(list(all_brands)))
         f.close()
 

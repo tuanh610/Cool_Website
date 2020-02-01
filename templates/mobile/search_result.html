@@ -13,9 +13,9 @@
         {{ error_message }}
         </div>
     {% else %}
-        <div class="row">
+        <div class="row container">
             {% for collection in allData %}
-                <div class="col s4 m3 l2">
+                <div class="col s6 m4 l3 l2">
                     {% include "mobile/cardItems.html" with collection=collection cardnumber=forloop.counter %}
                 </div>
             {% endfor %}
