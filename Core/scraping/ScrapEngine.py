@@ -3,8 +3,6 @@ from bs4 import BeautifulSoup
 # from urllib.parse import urljoin
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
-from Core.scraping.HoangHaMobileScraper import HoangHaMobileScraper
-from Core.scraping.TheGioiDiDongScaper import TheGioiDiDongScraper
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -17,7 +15,7 @@ class NoProductFoundException(Exception):
     pass
 
 
-parser = {"hoanghaMobile": HoangHaMobileScraper, 'thegioididong': TheGioiDiDongScraper}
+
 
 
 def connectToStaticWebSite(url, ignoreTerm=None):

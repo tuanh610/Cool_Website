@@ -5,6 +5,8 @@ import Core.utilityHelper as helper
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
 from django.urls import reverse
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 class SearchForm(forms.Form):
     phoneDBAdapter = phoneDBEngine(tableName=constants.dynamoDBTableName)

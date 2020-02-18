@@ -1,7 +1,7 @@
 from Core.mail.mailingModule import mailModule
 import Core.constant as constant
 from Core.database.phoneDBEngine import phoneDBEngine
-from Core.scraping.ScrapEngine import parser as scrap_parser
+from Core.scraping.parser import parser as scrap_parser
 import os
 
 def masterUpdate():

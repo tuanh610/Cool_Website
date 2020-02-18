@@ -4,16 +4,9 @@ from django.core.paginator import Paginator
 import Core.constant as constants
 import Core.utilityHelper as helper
 from .forms import SearchForm
+
+
 # Create your views here.
-
-def home(request):
-    return render(request, 'home.html', {'sources': constants.scrapingSources})
-
-
-def about(request):
-    return render(request, 'about.html')
-
-
 def new_search(request):
     searchform = SearchForm()
     return render(request, template_name='mobile/new_search.html', context={"form": searchform})
@@ -46,7 +39,6 @@ def search_result(request):
             'error_message': "You didn't select any filter conditions"
         })
 
-
 def search_PriceRange(request, dev, low, high, page):
     phoneDB = phoneDBEngine(tableName=constants.dynamoDBTableName)
     phones = phoneDBEngine.convertAllDataToPhone(phoneDB.getItemWithBrandAndPriceAndType(devType=dev, lowerLim=low, higherLim=high))
@@ -70,3 +62,4 @@ def all_mobiles(request, page):
 
     return render(request, 'mobile/all_mobiles.html',
                   {'allData': allData})
+

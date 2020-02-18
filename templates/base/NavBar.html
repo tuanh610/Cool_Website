@@ -15,7 +15,12 @@
             <a href="/" class="brand-logo">TuAnh Listing</a>
             <ul id="nav-mobile" class="right">
                 <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">Mobiles<i class="material-icons right">arrow_drop_down</i></a></li>
-                <li><a href={% url 'frontend:about' %}>About</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href={% url 'Logout' %}>Logout</a></li>
+                {% else %}
+                    <li><a href={% url 'Login' %}>Login</a></li>
+                {% endif %}
+                <li><a href={% url 'about' %}>About</a></li>
             </ul>
         </div>
     </nav>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+{%  include "base/headData.html" %}
+
+<body>
+{% include "base/NavBar.html" %}
+<main>
+    <div class="row s12 m4 l3 offset-m4 container">
+        <div class="card">
+            <div class="card-action teal lighten-1 white-text">
+                <h3>Login</h3>
+            </div>
+            <div class="card-content">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="form-field" style="margin-top: 5px;">
+                        <p>
+                          <label>
+                            <input type="checkbox" class="filled-in"/>
+                            <span>Remember me</span>
+                          </label>
+                        </p>
+                    </div><br/>
+                    <div class="form-group" style="margin-top: 10px">
+                        <button class="btn waves-effect waves-light" type="submit">Login</button>
+                    </div>
+                </form>
+                <div class="" style="margin-top: 10px">
+                    <small class="text-muted">
+                        Need An Account? <a class="ml-2" href="{% url 'Register' %}">Sign up now</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{%  include 'base/footer.html' %}
+
+</body>
+</html>
