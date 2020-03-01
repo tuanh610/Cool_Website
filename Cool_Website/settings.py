@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import dj_database_url
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
@@ -23,7 +24,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = '$zocm)_*jwdl5#cah@_e=2f^-sq)iwgmv2wuu$y=dqy+^b@0hd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["cool-website-tuanh.herokuapp.com", "127.0.0.1"]
 
@@ -80,11 +81,11 @@ WSGI_APPLICATION = 'Cool_Website.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'coolwebsiteDB',
-        'USER': 'postgres',
-        'PASSWORD': 'zuizui1350',
-        'HOST': 'localhost',
-        'PORT': '',
+        #'NAME': 'coolwebsiteDB',
+        #'USER': 'postgres',
+        #'PASSWORD': 'zuizui1350',
+        #'HOST': 'localhost',
+        #'PORT': '5432',
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
@@ -136,6 +137,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 prod_db = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(prod_db)
 
+try:
+    from Cool_Website.local_settings import *
+except Exception as e:
+    pass
 # Setting to redirect after successful login
 LOGIN_REDIRECT_URL = 'Cool_Website:home'
 
