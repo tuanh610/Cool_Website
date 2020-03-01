@@ -7,20 +7,21 @@
 <body>
 {% include "base/NavBar.html" %}
 <main>
-    <div class="row s12 m4 l3 offset-m4 container">
-        <div class="card">
-            <div class="card-action teal lighten-1 white-text">
+    <div class="row justify-content-center">
+        <div class="card col-6 bg-light my-3">
+            <div class="card-header">
                 <h3>Register</h3>
             </div>
-            <div class="card-content">
+            <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
                     {{ form|crispy }}
+                    <br/>
                     <div class="form-group" style="margin-top: 10px">
-                        <button class="btn waves-effect waves-light" type="submit">Register</button>
+                        <button class="btn btn-primary" type="submit">Register</button>
                     </div>
                 </form>
-                <div class="" style="margin-top: 10px">
+                <div class="card-footer" style="margin-top: 10px">
                     <small class="text-muted">
                         Already have an account? <a class="ml-2" href="{% url 'Login' %}">Login</a>
                     </small>

@@ -2,8 +2,21 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-  }
+}
 
 main {
   flex: 1 0 auto;
+}
+
+.divider-vertical {
+    width: 20px;
+    height: 60px;
+    margin: 0 9px;
+    border-left: 1px solid #F2F2F2;
+    border-right: 1px solid #FFF;
+    background-color: coral;
+}
+
+.photo_div {
+    height: 300px;
 }

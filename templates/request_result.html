@@ -5,29 +5,32 @@
 <body>
 {% include "base/NavBar.html" %}
 <main>
-    <h1 style="text-align: center">Operation Result</h1>
+    <h1 class="text-center my-5">Operation Result</h1>
     <div class="divider"></div>
-    {% if error %}
-        <h5  class="red-text darken-1" style="text-align: left">Operation failed. {{ error }}</h5>
-    {% else %}
-        <h5 class="green-text accent-3" style="text-align: left">Operation successful. {{ status }}</h5>
-    {% endif %}
-    <div class="row" style="margin-top: 100px">
-        <div class="col s2">
-            <form action="{% url 'home' %}">
-                <button class="btn waves-effect waves-light" type="submit" name="action">Return Home
-                    <i class="material-icons right">send</i>
-                </button>
-            </form>
-        </div>
-        <div class="col s2">
-            <form action="{% url 'frontend:all_mobiles' 1%}">
-                <button class="btn waves-effect waves-light" type="submit" name="action">All Mobiles
-                    <i class="material-icons right">send</i>
-                </button>
-            </form>
+    <div class="container">
+        {% if error %}
+            <h5  class="text-danger text-left">Operation failed. {{ error }}</h5>
+        {% else %}
+            <h5 class="text-success text-left">Operation successful. {{ status }}</h5>
+        {% endif %}
+        <div class="row mt-5">
+            <div class="col">
+                <form action="{% url 'home' %}">
+                    <button class="btn btn-primary" type="submit" name="action">Return Home
+                            <i class="fas fa-home"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="col">
+                <form action="{% url 'frontend:all_mobiles' 1%}">
+                    <button class="btn btn-primary" type="submit" name="action">All Mobiles
+                        <i class="fas fa-clipboard-list"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
+
 
 
 

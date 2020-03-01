@@ -3,10 +3,12 @@ from Core.database.phoneDBEngine import phoneDBEngine
 import Core.constant as constants
 import Core.utilityHelper as helper
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Row, Column
+from crispy_forms.layout import Layout, Submit, Row, Column, Div
+#from crispy_forms.layout import Layout, Submit, Row, Column
 from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Photo
 
 class SearchForm(forms.Form):
     phoneDBAdapter = phoneDBEngine(tableName=constants.dynamoDBTableName)
@@ -24,19 +26,84 @@ class SearchForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper
         self.helper.form_method = 'post'
-        self.helper.form_action = reverse('frontend:search_result')
+        self.helper.form_action = reverse('frontend:new_search')
         self.helper.layout = Layout(
-            Row(
-                Column('brand', css_class='col s6'),
-                Column('model', css_class='col s6'),
-                css_class='row'
+            Div(
+                Row(
+                    Column('brand', css_class='col col-md-6'),
+                    Column('model', css_class='col col-md-6'),
+                    css_class='row mt-3'
+                ),
+                Row(
+                    Column('type', css_class='col col-md-12'),
+                    css_class='row'),
+                Row(
+                    Column('lowPrice', css_class='col col-md-6'),
+                    Column('highPrice', css_class='col col-md-6'),
+                    css_class='row mb-3'
+                ),
+                css_class="container border border-info rounded"
             ),
-            Row(
-                Column('type', css_class='col s12'),
-                css_class='row'),
-            Row(
-                Column('lowPrice', css_class='col s6'),
-                Column('highPrice', css_class='col s6'),
+            Div(
+                Row(
+                    Column(
+                        Submit('submit', "Submit", css_class="btn btn-primary"),
+                        css_class="col-2"
+                    ),
+                    Column(
+                        Submit('cancel', "Cancel", css_class="btn btn-danger", formnovalidate='formnovalidate'),
+                        css_class="col-2"
+                    )
+                ),
+                css_class="container pt-3"
+            )
+        )
+
+class PhotoSubmitForm(forms.ModelForm):
+    """
+    A Form used to request the photos submission
+    """
+    class Meta:
+        model = Photo
+        fields = ('title', 'tags', 'draft', 'photo')
+        widgets = {
+            'photo': forms.ClearableFileInput(attrs={'multiple': True})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper
+        self.helper.form_method = 'post'
+        self.helper.form_action = reverse('frontend:submit_photo')
+        self.helper.layout = Layout(
+            Div(
+                Row(
+                    Column('title', css_class='col'),
+                    css_class="pt-3",
+                ),
+                Row(
+                    Column('tags', css_class='col'),
+                ),
+                Row(
+                    Column('draft', css_class='col'),
+                ),
+                Row(
+                    Column('photo', css_class='col'),
+                    css_class="pb-3",
+                ),
+                css_class= "container border border-info rounded"
             ),
-            Submit('submit', "Submit", css_class="waves-effect waves-light")
+            Div(
+                Row(
+                    Column(
+                        Submit('submit', "Submit", css_class="btn btn-primary"),
+                        css_class="col-2"
+                    ),
+                    Column(
+                        Submit('cancel', "Cancel", css_class="btn btn-danger", formnovalidate='formnovalidate'),
+                        css_class="col-2"
+                    )
+                ),
+                css_class= "container pt-3"
+            )
         )

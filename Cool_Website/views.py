@@ -1,6 +1,35 @@
 from django.shortcuts import render, redirect
 from .forms import UserRegisterForm
 import Core.constant as constants
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import AuthenticationForm
+
+def user_login(request):
+    """
+    This is the login view
+    :param request: the request of page
+    :return:
+    Render login view
+    """
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('home', permanent=True)
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+
+def user_logout(request):
+    """
+    This is the logout view
+    :param request: the request of the page
+    :return:
+    Reder logout view
+    """
+    logout(request)
+    return render(request, 'logout.html')
 
 def register(request):
     """

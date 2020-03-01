@@ -7,20 +7,22 @@
 {% include "base/NavBar.html" %}
 
 <main>
-    <h1 class="indigo-text darken-1" style="text-align: center">Search Result</h1>
-    {% if error_message %}
-        <div>
-        {{ error_message }}
-        </div>
-    {% else %}
-        <div class="row container">
-            {% for collection in allData %}
-                <div class="col s6 m4 l3 l2">
-                    {% include "mobile/cardItems.html" with collection=collection cardnumber=forloop.counter %}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <div class="container">
+        <h1 class="text-center text-dark my-5">Search Result</h1>
+        {% if error_message %}
+            <div>
+            {{ error_message }}
+            </div>
+        {% else %}
+            <div class="row">
+                {% for collection in allData %}
+                    <div class="col col-md-4 col-lg-3 col-sm-auto">
+                        {% include "mobile/cardItems.html" with collection=collection cardnumber=forloop.counter %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 
 </main>
 

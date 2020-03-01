@@ -2,6 +2,10 @@ import Core.scraping.PhoneData as PhoneData
 import Core.database.phoneDBEngine as phoneDBEngine
 import Core.constant as constant
 import pathlib
+from datetime import datetime, timezone
+
+def utcToLocal(utc_dt:datetime):
+    return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
 def arrangePhonesToList(phones: [PhoneData]):
     data = {}

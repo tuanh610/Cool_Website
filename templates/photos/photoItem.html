@@ -1,0 +1,20 @@
+{% load filter %}
+<div class="card my-3">
+
+    <div class="card-img-top photo_div">
+        <img src="{{ item.photo.url }}" height="100%" width="100%">
+    </div>
+
+    <div class="card-body" style="height: 150px">
+        <h5 class="card-title">{{ item.title }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">*Submitted by {{ item.added_by.username }}</h6>
+        <div class="card-text">
+            Tags: {{ item.tags }}
+        </div>
+    </div>
+
+    <div class="card-footer">
+        <a class="btn btn-primary py-2" href="{% url 'frontend:photo_detail' item.uuid %}"><h5>View Details</h5></a>
+    </div>
+
+</div>

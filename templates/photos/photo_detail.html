@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+{% load static %}
+{% load filter %}
+<html lang="en">
+{%  include "base/headData.html" %}
+
+<body>
+{% include "base/NavBar.html" %}
+<main>
+    <div class="container">
+        {% if item.draft is True %}
+            {% if user.is_authenticated is False or user.username != item.added_by.username %}
+                <h5 class="text-left text-danger">
+                    This photo is a draft. Please <a href="{% url 'Login' %}">log in</a> as submitter to view
+                </h5>
+            {% endif %}
+        {% endif %}
+
+        {% if item.draft is False or user.is_authenticated and user.username == item.added_by.username %}
+            <h1 class="text-center text-dark">{{ item.title }}</h1>
+
+            {% if error_message %}<p class="text-danger"><strong>{{ error_message }}</strong></p>{% endif %}
+            <hr>
+            <div class="row">
+
+                <div class="col-6">
+                    <h5 class="text-center text-info">Submited time: {{ item.created_at|convert_localtime }}</h5>
+                </div>
+
+                <div class="col-6">
+                    <h5 class="text-center text-info">Submitted by: {{ item.added_by.username }}</h5>
+                </div>
+            </div>
+
+            <hr>
+
+            <div>
+                <strong>Tag</strong>
+                <code style="white-space: pre-line; overflow: scroll">
+                    #{{ item.tags }}
+                </code>
+            </div>
+            <hr>
+
+            <div>
+                <strong>Photo</strong>
+            </div>
+            <div style="height: 500px; padding: 2em 0 0 2em">
+                <img src="{{ item.photo.url }}" height="100%" width="auto">
+            </div>
+        {% endif %}
+
+        {% if item.draft is True and user.is_authenticated and user.username == item.added_by.username %}
+            <div class="row mt-3">
+                <div class="col-1">
+                    <form action="{% url 'frontend:publish_draft' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value={{ item.uuid }}>
+                        <button class="btn btn-primary" type="submit" name="publish">
+                            Publish
+                        </button>
+                    </form>
+                </div>
+                <div class="col-1">
+                    <form action="{% url 'frontend:delete_draft' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value={{ item.uuid }}>
+                        <button class="btn btn-primary" type="submit" name="delete">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</main>
+
+{%  include 'base/footer.html' %}
+
+</body>
+</html>

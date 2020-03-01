@@ -1,11 +1,11 @@
-<nav aria-label="Page navigation main">
+<nav class="my-4" aria-label="Page navigation main">
     <ul class="pagination">
         {% if items.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="{% url 'frontend:all_mobiles' 1 %}">First</a>
+                <a class="page-link" href="{% url 'frontend:view_photos' mode 1 username %}">First</a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="{% url 'frontend:all_mobiles' items.previous_page_number %}">&laquo;</a>
+                <a class="page-link" href="{% url 'frontend:view_photos' mode items.previous_page_number username %}">&laquo;</a>
             </li>
         {% else %}
             <li class="page-item disabled">
@@ -22,16 +22,16 @@
                 </li>
           {% elif i > items.number|add:'-3' and i < items.number|add:'3' %}
                 <li class="page-item">
-                    <a class="page-link" href="{% url 'frontend:all_mobiles' i %}">{{ i }}</a>
+                    <a class="page-link" href="{% url 'frontend:view_photos' mode num username %}">{{ i }}</a>
                 </li>
           {% endif %}
         {% endfor %}
         {% if items.has_next %}
             <li class="page-item">
-                <a class="page-link" href="{% url 'frontend:all_mobiles' items.next_page_number %}">&raquo;</a>
+                <a class="page-link" href="{% url 'frontend:view_photos' mode items.next_page_number %}">&raquo;</a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="{% url 'frontend:all_mobiles' items.paginator.num_pages %}">Last</a>
+                <a class="page-link" href="{% url 'frontend:view_photos' mode items.paginator.num_pages mode num %}">Last</a>
             </li>
         {% else %}
             <li class="page-item disabled">

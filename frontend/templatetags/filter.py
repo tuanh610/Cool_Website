@@ -1,5 +1,6 @@
 from django import template
 from datetime import date, timedelta
+import Core.utilityHelper as helper
 
 register = template.Library()
 
@@ -21,3 +22,7 @@ def get_price_string(phone):
 @register.filter(name='remove_space')
 def remove_space(data):
     return ''.join(e for e in data if e.isalnum())
+
+@register.filter(name='convert_localtime')
+def convert_localtime(data):
+    return helper.utcToLocal(data).strftime("%d %b %Y %H:%M:%S")

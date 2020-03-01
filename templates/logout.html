@@ -7,11 +7,11 @@
 <body>
 {% include "base/NavBar.html" %}
 <main>
-    <div class="row s12 m4 l3 offset-m4 container">
-        <h2>You have been logged out</h2>
+    <div class="container">
+        <h2 class="text-center my-3">You have been logged out</h2>
         <div class="" style="margin-top: 10px">
             <small class="text-muted">
-                <a class="ml-2" href="{% url 'Login' %}">Log in Again</a>
+                <a href="{% url 'Login' %}">Log in Again</a>
             </small>
         </div>
     </div>

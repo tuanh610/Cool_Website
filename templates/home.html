@@ -7,21 +7,6 @@
 {% include "base/NavBar.html" %}
 <main>
     {%  include "base/intro.html" %}
-
-    <div class="nav-wrapper container">
-      <form action="{% url 'frontend:new_search' %}" method="post">
-        {% csrf_token %}
-        <div class="input-field">
-          <input id="search" type="search" name="search" required>
-          <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-          <i class="material-icons">close</i>
-        </div>
-        <button class="btn waves-effect waves-light" type="submit" name="searchBtn">
-            Search <i class="material-icons right">send</i>
-        </button>
-      </form>
-    </div>
-
     {% block content %}
     {% endblock content %}
 </main>

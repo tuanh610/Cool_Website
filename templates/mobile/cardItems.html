@@ -1,34 +1,59 @@
 {% load filter %}
-<div class="card">
-    <div class="card-content" style="height: 150px">
-      <h5>{{ collection.name }}</h5>
-      <span class="card-title purple-text darken-3" style="font-size: small">*Price from {{ collection.minPrice }}</span>
-    </div>
-    <div class="card-tabs">
-        <ul class="tabs tabs-fixed-width">
+
+<div class="card bg-light mb-3" >
+    <div class="card-header">
+        <h5 class="card-title">{{ collection.name }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Price from: {{ collection.minPrice}}</h6>
+        <ul class="nav nav-tabs card-header-tabs" id="navtab{{ cardnumber }}" role="tablist">
             {% for phone in collection.phoneList %}
-                <li class="tab grey lighten-3"><a href="#{{ cardnumber }}_{{ forloop.counter }}"><strong>#{{ forloop.counter }}</strong></a></li>
+                {% if forloop.counter == 1 %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#tab{{ cardnumber }}at{{ forloop.counter }}" role="tab" aria-controls="tab{{ cardnumber }}at{{ forloop.counter }}" aria-selected="true">
+                            <strong>Source {{ forloop.counter }}</strong>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tab{{ cardnumber }}at{{ forloop.counter }}" role="tab" aria-controls="tab{{ cardnumber }}at{{ forloop.counter }}" aria-selected="false">
+                            <strong>Source {{ forloop.counter }}</strong>
+                        </a>
+                    </li>
+                {% endif %}
             {% endfor %}
         </ul>
     </div>
 
-    <div class="card-content">
-        {% for phone in collection.phoneList %}
-        <div id="{{ cardnumber }}_{{ forloop.counter }}">
-            <div class="card-image">
-                <img src="{{ phone.info|get_item:'img' }}" height="200">
-            </div>
-            <div class="card-action">
-                <a href="{{ phone.info|get_item:'url' }}">{{ phone.vendor }}: {{ phone|get_price_string }}</a>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
 
+    <div class="card-body">
+        <div class="tab-content mt-3">
+            {% for phone in collection.phoneList %}
+                {% if forloop.counter == 1 %}
+                    <div class="tab-pane active" id="tab{{ cardnumber }}at{{ forloop.counter }}" role="tabpanel">
+                        <div style="height: 200px">
+                            <img class="card-img" src="{{ phone.info|get_item:'img' }}" height="100%" width="auto" alt="Card image cap">
+                        </div>
+                        <p class="card-text">{{ phone.vendor }}: {{ phone|get_price_string }}</p>
+                        <a href="{{ phone.info|get_item:'url' }}" class="btn btn-primary">Go to source</a>
+                    </div>
+                {% else %}
+                    <div class="tab-pane" id="tab{{ cardnumber }}at{{ forloop.counter }}" role="tabpanel">
+                        <div style="height: 200px">
+                            <img class="card-img" src="{{ phone.info|get_item:'img' }}" height="100%" width="auto" alt="Card image cap">
+                        </div>
+                        <p class="card-text">{{ phone.vendor }}: {{ phone|get_price_string }}</p>
+                        <a href="{{ phone.info|get_item:'url' }}" class="btn btn-primary">Go to source</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
 </div>
 
 <script>
-$(document).ready(function(){
-$('.tabs').tabs();
-});
+    $(document).ready(function(){
+        $("#navtab".concat( {{ cardnumber }} , " a")).click(function(e){
+            e.preventDefault();
+            $(this).tab('show');
+        });
+    });
 </script>

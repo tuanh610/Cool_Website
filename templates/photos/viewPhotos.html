@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+{%  include "base/headData.html" %}
+
+<body>
+{% include "base/NavBar.html" %}
+
+<main>
+    {% include "base/intro.html" %}
+
+     <!-- Buttons to select view mode -->
+    <div class="container my-4">
+        {% if mode == 0 %}
+            <a class="btn btn-primary disabled" href="#"><i class="fas fa-arrow-up"></i> From Latest</a>
+            <a class="btn btn-primary" href="{% url 'frontend:view_photos' 1 1 %}"><i class="fas fa-arrow-down"></i> From Oldest</a>
+        {% elif mode == 1 %}
+            <a class="btn btn-primary" href="{% url 'frontend:view_photos' 0 1 %}"><i class="fas fa-arrow-up"></i> From Latest</a>
+            <a class="btn btn-primary disabled" href="#"><i class="fas fa-arrow-down"></i> From Oldest</a>
+        {% else %}
+            <a class="btn btn-primary" href="{% url 'frontend:view_photos' 0 1 %}"><i class="fas fa-arrow-up"></i> From Latest</a>
+            <a class="btn btn-primary" href="{% url 'frontend:view_photos' 1 1 %}"></i> From Oldest</a>
+        {% endif %}
+        <span class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-user"></i> By User
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                {% for usr in all_users %}
+                    <a class="dropdown-item" href="{% url 'frontend:view_photos' 2 1 usr.username %}">{{ usr.username }}</a>
+                {% endfor %}
+            </div>
+        </span>
+    </div>
+
+    <div class="container">
+        {% include "base/paginator_photos.html" with items=allData mode=mode%}
+        <!-- Name of user -->
+        {% if mode == 2 %}
+            <div class="container text-center">
+                 <h1>{{ username }}'s Photos</h1>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            {% for item in allData %}
+                <div class="col col-md-4 col-lg-3 col-sm-auto">
+                    {% include "photos/photoItem.html" with item=item %}
+                </div>
+            {% endfor %}
+        </div>
+        {% include "base/paginator_photos.html" with items=allData mode=mode%}
+    </div>
+</main>
+
+{% include "base/footer.html" %}
+</body>
+</html>

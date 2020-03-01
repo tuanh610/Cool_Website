@@ -17,16 +17,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from .settings import STATIC_URL, STATIC_ROOT
-from django.contrib.auth import views as auth_view
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('frontend.urls')),
 # Login url
-    path('login/', auth_view.LoginView.as_view(template_name='login.html'), name='Login'),
+    path('login/', views.user_login, name='Login'),
     # Logout url
-    path('logout/', auth_view.LogoutView.as_view(template_name='logout.html'), name='Logout'),
+    path('logout/', views.user_logout, name='Logout'),
     #Register URL
     path('register/', views.register, name='Register'),
     path('about/', views.about, name='about'),

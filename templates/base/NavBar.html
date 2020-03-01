@@ -1,32 +1,64 @@
-<!-- Dropdown Structure -->
-<ul id="dropdown1" class="dropdown-content">
-  <li><a href="{% url 'frontend:all_mobiles' 1%}">All Mobiles</a></li>
-  <li class="divider"></li>
-  <li><a href="{% url 'frontend:mobile_byprice' 'Mobile' 0 4000000 1%}">Below 4.000.000</a></li>
-  <li><a href="{% url 'frontend:mobile_byprice' 'Mobile' 4000000 10000000 1%}">4.000.000 - 10.000.000</a></li>
-  <li><a href="{% url 'frontend:mobile_byprice' 'Mobile' 10000000 1000000000 1%}">Above 10.000.000</a></li>
-  <li class="divider"></li>
-  <li><a href="{% url 'frontend:new_search' %}">Detail Search</a></li>
-</ul>
+<header class="sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-info text-light">
+        <a class="navbar-brand" href="/">TuAnh Listing</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
 
-<header>
-    <nav>
-        <div class="container nav-wrapper">
-            <a href="/" class="brand-logo">TuAnh Listing</a>
-            <ul id="nav-mobile" class="right">
-                <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">Mobiles<i class="material-icons right">arrow_drop_down</i></a></li>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <!-- Drop down for photos-->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="photoDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Photos
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="photoDropDown">
+                        <a class="dropdown-item" href="{% url 'frontend:submit_photo' %}">Submit Photos</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'frontend:view_photos' 0 1 %}">View Photos</a>
+                        {% if user.is_authenticated %}
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'frontend:view_drafts' 0 1 %}">View My Draft</a>
+                        {% endif %}
+                    </div>
+                </li>
+                <!-- Drop down for Mobiles -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="mobileDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Mobiles
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="mobileDropDown">
+                        <a class="dropdown-item" href="{% url 'frontend:all_mobiles' 1%}">All Mobiles</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'frontend:mobile_byprice' 'Mobile' 0 4000000 1%}">Below 4.000.000</a>
+                        <a class="dropdown-item" href="{% url 'frontend:mobile_byprice' 'Mobile' 4000000 10000000 1%}">4.000.000 - 10.000.000</a>
+                        <a class="dropdown-item" href="{% url 'frontend:mobile_byprice' 'Mobile' 10000000 1000000000 1%}">Above 10.000.000</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'frontend:new_search' %}">Detail Search</a>
+                    </div>
+                </li>
+                <!-- Login/Logout -->
+                <li class="nav-item">
+                    {% if user.is_authenticated %}
+                        <a class="nav-link" href={% url 'Logout' %}>Logout</a>
+                    {% else %}
+                        <a class="nav-link" href={% url 'Login' %}>Login</a>
+                    {% endif %}
+                </li>
+
+                <!-- About page -->
+                <li class="nav-item">
+                    <a class="nav-link" href={% url 'about' %}>About</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <!-- Login status -->
                 {% if user.is_authenticated %}
-                    <li><a href={% url 'Logout' %}>Logout</a></li>
+                    <span class="navbar-text">Welcome {{ user.username }}</span>
                 {% else %}
-                    <li><a href={% url 'Login' %}>Login</a></li>
+                    <span class="navbar-text">Guest</span>
                 {% endif %}
-                <li><a href={% url 'about' %}>About</a></li>
             </ul>
         </div>
     </nav>
 </header>
-<script>
-    $(document).ready(function(){
-        $(".dropdown-trigger").dropdown();
-    });
-</script>
