@@ -74,7 +74,8 @@ def createTable(tableName: str, primaryElemens: [DynamoElement], secondaryElemen
         table.meta.client.get_waiter('table_exists').wait(TableName=tableName)
     except ClientError as e:
         if e.response['Error']['Code'] == "ResourceNotFoundException":
-            print("Table " + tableName + " already existed")
+            #print("Table " + tableName + " already existed")
+            pass
         else:
             print(e.response['Error']['Message'])
     else:
