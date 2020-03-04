@@ -34,7 +34,7 @@
         <div class="row">
             {% for item in allData %}
                 <div class="col col-md-4 col-lg-3 col-sm-auto">
-                    {% include "photos/photoItem.html" with item=item %}
+                    {% include "photos/photoItem.html" with item=item size=size %}
                 </div>
             {% endfor %}
         </div>

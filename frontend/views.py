@@ -115,7 +115,7 @@ def view_photos(request, mode, page, username=None):
     paginator = Paginator(all_photos, 12)
     allData = paginator.get_page(page)
     return render(request, template_name='photos/viewPhotos.html',
-                  context={"allData": allData, "mode": mode, "all_users": all_users, "username":username})
+                  context={"allData": allData, "mode": mode, "all_users": all_users, "username":username, "size":constants.thumbnail_size})
 
 def view_drafts(request, mode, page):
     """
@@ -135,7 +135,7 @@ def view_drafts(request, mode, page):
     paginator = Paginator(all_photos, 12)
     allData = paginator.get_page(page)
     return render(request, template_name='photos/viewDrafts.html',
-                  context={"allData": allData, "mode": mode})
+                  context={"allData": allData, "mode": mode, "size": constants.thumbnail_size})
 
 
 def photo_detail(request, pk):

@@ -2,7 +2,7 @@
 <div class="card my-3">
 
     <div class="card-img-top photo_div">
-        <img src="{{ item.photo.url }}" height="100%" width="100%">
+        <img src="{{ item.photo.url|get_thumbnail:size }}" height="100%" width="100%">
     </div>
 
     <div class="card-body" style="height: 150px">

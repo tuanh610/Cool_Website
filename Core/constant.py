@@ -16,3 +16,7 @@ scrapingSources = [
 priceRange = [(0, 2000000), (2000000, 5000000), (5000000, 10000000), (1000000, 20000000)]
 
 currencyCode = ["₫", "SGD", "USD", "EUR", "INR", "VND", "JPY"]
+
+s3_bucket_name = "imagestore.tuanh1234"
+lambda_endpoint = "https://ntftjpy811.execute-api.ap-southeast-1.amazonaws.com/dev/"
+thumbnail_size = "250x350"
